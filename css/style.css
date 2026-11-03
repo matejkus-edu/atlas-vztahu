@@ -352,7 +352,7 @@ legend { font-size: 15px; font-weight: 550; padding: 0; margin-bottom: 6px; }
 .sym-toggle[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: var(--paper); }
 .mapsvg .ring { fill: none; stroke: var(--line); stroke-width: 1.5; }
 .mapsvg .ring.dashed { stroke-dasharray: 6 7; }
-.mapsvg .ring-label { fill: var(--ink-2); font-size: 13px; font-family: var(--font); }
+.mapsvg .ring-label { fill: var(--ink-2); font-size: 16px; font-weight: 600; font-family: var(--font); }
 .mapsvg .me { fill: var(--ink); }
 .mapsvg .me-label { fill: var(--paper); font-family: var(--font); font-weight: 700; font-size: 18px; }
 .mapsvg .person { cursor: pointer; }

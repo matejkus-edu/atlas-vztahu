@@ -36,7 +36,8 @@ function load() {
     ...b, ...d,
     prio: { ...b.prio, ...(d.prio || {}) },
     reflect: { ...b.reflect, ...(d.reflect || {}) },
-    people: Array.isArray(d.people) ? d.people : [],
+    // starší data měla 5 kruhů; vše za 4. kruhem patří do 4
+    people: Array.isArray(d.people) ? d.people.map((p) => ({ ...p, ring: Math.min(4, Math.max(1, Number(p.ring) || 1)) })) : [],
     customSymbols: Array.isArray(d.customSymbols) ? d.customSymbols : [],
     customValues: Array.isArray(d.customValues) ? d.customValues : [],
     pairs: Array.isArray(d.pairs) && d.pairs.length ? d.pairs : b.pairs,
@@ -73,14 +74,14 @@ export function initPersonal(context) {
 }
 
 // ── mapa ────────────────────────────────────────────────────
-const C = 320, R0 = 54, STEP = 52;
-const ringOuter = (i) => R0 + i * STEP; // i = 1..5
+const C = 320, R0 = 54, STEP = 64;
+const ringOuter = (i) => R0 + i * STEP; // i = 1..4
 const ringMid = (i) => R0 + (i - 0.5) * STEP;
 
 function initMapForm() {
   const ring = $("p-ring");
   ring.innerHTML = "";
-  RINGS.forEach((r) => ring.append(h("option", { value: r.id }, r.id + " · " + r.name)));
+  RINGS.forEach((r) => ring.append(h("option", { value: r.id }, r.id + (r.name ? " (" + r.name + ")" : ""))));
   const type = $("p-type");
   type.innerHTML = "";
   type.append(h("option", { value: "" }, "Neurčeno"));
@@ -190,12 +191,12 @@ function editPerson(p) {
 export function buildMapSvg(svg, interactive) {
   svg.innerHTML = "";
   RINGS.slice().reverse().forEach((r) => {
-    svg.append(s("circle", { class: "ring" + (r.dashed ? " dashed" : ""), cx: C, cy: C, r: ringOuter(r.id) }));
+    svg.append(s("circle", { class: "ring", cx: C, cy: C, r: ringOuter(r.id) }));
   });
   RINGS.forEach((r) => {
     svg.append(s("text", {
       class: "ring-label", x: C, y: C + ringOuter(r.id) - 8, "text-anchor": "middle",
-      text: r.name, style: { paintOrder: "stroke", stroke: "var(--paper)", strokeWidth: "4px" },
+      text: String(r.id), style: { paintOrder: "stroke", stroke: "var(--paper)", strokeWidth: "4px" },
     }));
   });
   svg.append(s("circle", { class: "me", cx: C, cy: C, r: R0 - 8 }));
@@ -415,7 +416,8 @@ function printPdf() {
   const mapSec = h("section", { class: "pr-section" }, h("h2", {}, "Moje mapa vztahů"),
     h("div", { class: "pr-map" }, mapSvg,
       h("div", { class: "pr-legend" },
-        RINGS.map((r) => h("div", {}, h("b", {}, r.name + ": "), me.people.filter((p) => p.ring === r.id).length || "–")),
+        h("div", {}, "Míra blízkosti: 1 = nejbližší, 4 = nejvzdálenější"),
+        RINGS.map((r) => h("div", {}, h("b", {}, "Blízkost " + r.id + ": "), me.people.filter((p) => p.ring === r.id).length || "–")),
         h("div", {}, " "),
         allSymbols().map((sy) => h("div", {}, h("b", {}, sy.s + " "), sy.label)),
       )));

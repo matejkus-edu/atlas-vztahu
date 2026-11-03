@@ -53,11 +53,10 @@ export const SYMBOLS = [
   { id: "bolt", s: "⚡", label: "Stojí mě hodně energie" },
 ];
 
-// Kruhy osobní mapy (od středu ven).
+// Míra blízkosti v osobní mapě: 1 = nejblíž ke středu, 4 = nejdál.
 export const RINGS = [
-  { id: 1, name: "Nejbližší" },
-  { id: 2, name: "Blízcí" },
-  { id: 3, name: "Přátelé a kamarádi" },
-  { id: 4, name: "Známí" },
-  { id: 5, name: "Jednostranné vztahy", dashed: true },
+  { id: 1, name: "nejbližší" },
+  { id: 2, name: "" },
+  { id: 3, name: "" },
+  { id: 4, name: "nejvzdálenější" },
 ];
