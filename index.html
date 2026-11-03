@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261103f">
+  <link rel="stylesheet" href="css/style.css?v=20261103h">
 </head>
 <body>
   <a class="skip" href="#content">Přeskočit na obsah</a>
@@ -75,16 +75,25 @@
       <section class="block wrap" aria-labelledby="map-title">
         <header class="block-head">
           <h2 id="map-title">Moje mapa vztahů</h2>
-          <p class="block-sub">Do kruhů zapiš lidi podle toho, jak blízký vztah s nimi máš: 1 je nejblíž, 4 nejdál. Stačí iniciály nebo značka. Symboly ukazují, co ti vztah dává.</p>
+          <p class="block-sub">Do kruhů zapiš lidi podle toho, jak blízký vztah s nimi máš: 1 je nejblíž, 4 nejdál. Ke každému si můžeš poznamenat, co ti vztah dává. Uvidíš to po klepnutí na jméno v mapě.</p>
         </header>
         <div class="map-layout">
           <div class="map-canvas">
-            <svg id="map-svg" class="mapsvg" viewBox="0 0 640 640" role="img" aria-label="Moje mapa vztahů"></svg>
+            <div class="map-zoom-box" id="map-zoom-box">
+              <svg id="map-svg" class="mapsvg" viewBox="0 0 1000 1000" role="img" aria-label="Moje mapa vztahů"></svg>
+            </div>
+            <div class="zoom-bar" role="group" aria-label="Přiblížení mapy">
+              <button type="button" class="zoom-btn" id="zoom-out" aria-label="Oddálit">−</button>
+              <span id="zoom-level" class="muted">100 %</span>
+              <button type="button" class="zoom-btn" id="zoom-in" aria-label="Přiblížit">+</button>
+              <button type="button" class="btn btn-quiet zoom-reset" id="zoom-reset">Celá mapa</button>
+              <span class="muted map-note">⚡ = vztah mě někdy stojí hodně energie</span>
+            </div>
           </div>
           <form class="map-form panel" id="map-form" autocomplete="off">
             <h3 id="map-form-title">Přidat člověka</h3>
-            <label>Iniciály nebo značka
-              <input id="p-label" type="text" maxlength="4" required>
+            <label>Jméno nebo iniciály
+              <input id="p-label" type="text" maxlength="40" required>
             </label>
             <label>Míra blízkosti <span class="muted">(1 = nejbližší)</span>
               <select id="p-ring"></select>
@@ -92,25 +101,20 @@
             <label>Typ vztahu
               <select id="p-type"></select>
             </label>
-            <fieldset class="symbols">
-              <legend>Co mi vztah dává</legend>
-              <div id="p-symbols"></div>
-              <div class="custom-add" id="sym-add">
-                <label class="visually-hidden" for="sym-new-label">Vlastní položka</label>
-                <input id="sym-new-label" type="text" maxlength="40" placeholder="Vlastní, např. Hrajeme spolu hudbu">
-                <label class="visually-hidden" for="sym-new-glyph">Značka</label>
-                <select id="sym-new-glyph"></select>
-                <button type="button" class="btn btn-quiet btn-add" id="sym-new-btn">Přidat</button>
-              </div>
-            </fieldset>
+            <label>Co mi tento vztah dává
+              <textarea id="p-gives" rows="3" maxlength="400" placeholder="Napiš vlastními slovy, např. Můžu se jí se vším svěřit a vždycky mě rozesměje."></textarea>
+            </label>
+            <label class="check">
+              <input type="checkbox" id="p-bolt">
+              <span>⚡ Tento vztah mě někdy stojí hodně energie</span>
+            </label>
             <div class="form-actions">
               <button type="submit" class="btn btn-ink" id="p-save">Přidat do mapy</button>
-              <button type="button" class="btn btn-quiet" id="p-cancel" hidden>Zrušit úpravy</button>
+              <button type="button" class="btn btn-quiet" id="p-cancel" hidden>Zavřít</button>
               <button type="button" class="btn btn-danger" id="p-delete" hidden>Odebrat z mapy</button>
             </div>
           </form>
         </div>
-        <ul class="map-legend" id="map-legend"></ul>
       </section>
 
       <section class="block wrap" aria-labelledby="prio-title">
@@ -186,6 +190,6 @@
   <div id="print-root" aria-hidden="true"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
-  <script type="module" src="js/app.js?v=20261103f"></script>
+  <script type="module" src="js/app.js?v=20261103h"></script>
 </body>
 </html>

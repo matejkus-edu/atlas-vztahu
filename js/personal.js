@@ -1,7 +1,7 @@
 // Osobní část: ukládá se jen do localStorage tohoto prohlížeče.
-import { CLASSES, VALUES, SYMBOLS, RINGS, SITE } from "./config.js?v=20261103f";
-import { ls, submitItem } from "./api.js?v=20261103f";
-import { h, s, toast } from "./ui.js?v=20261103f";
+import { CLASSES, VALUES, SYMBOLS, RINGS, SITE } from "./config.js?v=20261103h";
+import { ls, submitItem } from "./api.js?v=20261103h";
+import { h, s, toast } from "./ui.js?v=20261103h";
 
 const KEY = "atlas-me-v1";
 const $ = (id) => document.getElementById(id);
@@ -18,15 +18,23 @@ function blank() {
     prio: { general: VALUES.map((v) => v.id) },
     pairs: [{ id: uid(), type: "", gift: "", cost: "", mark: "", sent: false }],
     reflect: { strong: "", grow: "", act: "" },
-    customSymbols: [],
     customValues: [],
   };
 }
 
-// značky pro vlastní položky v mapě
-const GLYPHS = ["◆", "●", "▲", "✿", "☀", "♫", "☕", "✎", "♣", "☂", "✈", "⚽"];
-const allSymbols = () => [...SYMBOLS, ...me.customSymbols];
 const allValues = () => [...VALUES, ...me.customValues];
+
+// Starší verze mapy měla u lidí značky (symbols). Převedeme je na blesk + text „co mi vztah dává“.
+function migratePerson(p, customSymbols) {
+  const ring = Math.min(4, Math.max(1, Number(p.ring) || 1));
+  if (!Array.isArray(p.symbols)) return { ...p, ring, gives: p.gives || "", bolt: !!p.bolt };
+  const labels = p.symbols
+    .filter((id) => id !== "bolt")
+    .map((id) => [...SYMBOLS, ...customSymbols].find((sy) => sy.id === id)?.label)
+    .filter(Boolean);
+  const { symbols, ...rest } = p;
+  return { ...rest, ring, bolt: symbols.includes("bolt"), gives: p.gives || labels.join(", ") };
+}
 
 function load() {
   const d = ls.get(KEY, null);
@@ -36,9 +44,8 @@ function load() {
     ...b, ...d,
     prio: { ...b.prio, ...(d.prio || {}) },
     reflect: { ...b.reflect, ...(d.reflect || {}) },
-    // starší data měla 5 kruhů; vše za 4. kruhem patří do 4
-    people: Array.isArray(d.people) ? d.people.map((p) => ({ ...p, ring: Math.min(4, Math.max(1, Number(p.ring) || 1)) })) : [],
-    customSymbols: Array.isArray(d.customSymbols) ? d.customSymbols : [],
+    // starší data měla 5 kruhů a značky; převedeme je
+    people: Array.isArray(d.people) ? d.people.map((p) => migratePerson(p, Array.isArray(d.customSymbols) ? d.customSymbols : [])) : [],
     customValues: Array.isArray(d.customValues) ? d.customValues : [],
     pairs: Array.isArray(d.pairs) && d.pairs.length ? d.pairs : b.pairs,
   };
@@ -74,9 +81,12 @@ export function initPersonal(context) {
 }
 
 // ── mapa ────────────────────────────────────────────────────
-const C = 320, R0 = 54, STEP = 64;
+const VB = 1000, C = VB / 2, R0 = 66, STEP = 104;
 const ringOuter = (i) => R0 + i * STEP; // i = 1..4
 const ringMid = (i) => R0 + (i - 0.5) * STEP;
+const PILL_H = 32;
+const shortName = (s) => (s.length > 26 ? s.slice(0, 25) + "…" : s);
+const pillWidth = (label, bolt) => Math.min(230, Math.round(shortName(label).length * 9 + (bolt ? 24 : 0) + 26));
 
 function initMapForm() {
   const ring = $("p-ring");
@@ -86,20 +96,17 @@ function initMapForm() {
   type.innerHTML = "";
   type.append(h("option", { value: "" }, "Neurčeno"));
   ctx.types.forEach((t) => type.append(h("option", { value: t.id }, t.name)));
-  const symHost = $("p-symbols");
-  renderSymbolToggles([]);
-  $("sym-new-btn").onclick = addCustomSymbol;
-  $("sym-new-label").onkeydown = (e) => { if (e.key === "Enter") { e.preventDefault(); addCustomSymbol(); } };
 
   $("map-form").onsubmit = (e) => {
     e.preventDefault();
-    const label = $("p-label").value.trim().slice(0, 4);
+    const label = $("p-label").value.trim().slice(0, 40);
     if (!label) return;
     const data = {
       label,
       ring: Number($("p-ring").value),
       type: $("p-type").value,
-      symbols: [...symHost.querySelectorAll("[aria-pressed='true']")].map((b) => b.dataset.sym),
+      gives: $("p-gives").value.trim().slice(0, 400),
+      bolt: $("p-bolt").checked,
     };
     if (editingId) Object.assign(me.people.find((p) => p.id === editingId), data);
     else me.people.push({ id: uid(), ...data });
@@ -113,61 +120,13 @@ function initMapForm() {
     me.people = me.people.filter((p) => p.id !== editingId);
     save(); resetMapForm(); renderMap();
   };
-
-  renderLegend();
-}
-
-function renderLegend() {
-  const leg = $("map-legend");
-  leg.innerHTML = "";
-  allSymbols().forEach((sy) => leg.append(h("li", {}, h("b", {}, sy.s), sy.label)));
-}
-
-function renderSymbolToggles(pressed) {
-  const symHost = $("p-symbols");
-  symHost.innerHTML = "";
-  const toggle = (sy) => h("button", {
-    type: "button", class: "sym-toggle", "data-sym": sy.id, "aria-pressed": String(pressed.includes(sy.id)),
-    onclick: (e) => e.currentTarget.setAttribute("aria-pressed", String(e.currentTarget.getAttribute("aria-pressed") !== "true")),
-  }, h("b", { "aria-hidden": "true" }, sy.s), sy.label);
-  SYMBOLS.forEach((sy) => symHost.append(toggle(sy)));
-  me.customSymbols.forEach((sy) => symHost.append(h("span", { class: "sym-item" }, toggle(sy),
-    h("button", { type: "button", class: "sym-del", "aria-label": "Odebrat vlastní položku " + sy.label, title: "Odebrat", onclick: () => removeCustomSymbol(sy.id) }, "×"))));
-  const used = me.customSymbols.map((x) => x.s);
-  const glyph = $("sym-new-glyph");
-  glyph.innerHTML = "";
-  GLYPHS.filter((g) => !used.includes(g)).forEach((g) => glyph.append(h("option", { value: g }, g)));
-}
-
-const pressedSymbols = () => [...document.querySelectorAll("#p-symbols .sym-toggle[aria-pressed='true']")].map((b) => b.dataset.sym);
-
-function addCustomSymbol() {
-  const label = $("sym-new-label").value.trim();
-  if (!label) { toast("Napiš, co ti vztah dává."); $("sym-new-label").focus(); return; }
-  const sy = { id: "c-" + uid(), s: $("sym-new-glyph").value || "◆", label };
-  me.customSymbols.push(sy);
-  save();
-  renderSymbolToggles([...pressedSymbols(), sy.id]);
-  renderLegend();
-  $("sym-new-label").value = "";
-  toast("Přidáno: " + sy.s + " " + label);
-}
-
-function removeCustomSymbol(id) {
-  const pressed = pressedSymbols().filter((x) => x !== id);
-  me.customSymbols = me.customSymbols.filter((x) => x.id !== id);
-  me.people.forEach((p) => (p.symbols = p.symbols.filter((x) => x !== id)));
-  save();
-  renderSymbolToggles(pressed);
-  renderLegend();
-  renderMap();
+  initZoom();
 }
 
 function resetMapForm() {
   editingId = null;
   $("map-form").reset();
   $("p-ring").value = "1";
-  document.querySelectorAll("#p-symbols .sym-toggle").forEach((b) => b.setAttribute("aria-pressed", "false"));
   $("map-form-title").textContent = "Přidat člověka";
   $("p-save").textContent = "Přidat do mapy";
   $("p-cancel").hidden = true;
@@ -179,51 +138,62 @@ function editPerson(p) {
   $("p-label").value = p.label;
   $("p-ring").value = String(p.ring);
   $("p-type").value = p.type || "";
-  document.querySelectorAll("#p-symbols .sym-toggle").forEach((b) => b.setAttribute("aria-pressed", String(p.symbols.includes(b.dataset.sym))));
-  $("map-form-title").textContent = "Upravit " + p.label;
+  $("p-gives").value = p.gives || "";
+  $("p-bolt").checked = !!p.bolt;
+  $("map-form-title").textContent = p.label;
   $("p-save").textContent = "Uložit změny";
   $("p-cancel").hidden = false;
   $("p-delete").hidden = false;
   renderMap();
-  $("p-label").focus();
+  // na úzké obrazovce je formulář pod mapou: posuneme se k němu
+  if (window.matchMedia("(max-width: 820px)").matches) $("map-form").scrollIntoView({ behavior: "smooth", block: "start" });
+  else $("p-gives").focus();
 }
 
 export function buildMapSvg(svg, interactive) {
   svg.innerHTML = "";
+  svg.setAttribute("viewBox", `0 0 ${VB} ${VB}`);
   RINGS.slice().reverse().forEach((r) => {
     svg.append(s("circle", { class: "ring", cx: C, cy: C, r: ringOuter(r.id) }));
   });
   RINGS.forEach((r) => {
     svg.append(s("text", {
-      class: "ring-label", x: C, y: C + ringOuter(r.id) - 8, "text-anchor": "middle",
+      class: "ring-label", x: C, y: C + ringOuter(r.id) - 10, "text-anchor": "middle",
       text: String(r.id), style: { paintOrder: "stroke", stroke: "var(--paper)", strokeWidth: "4px" },
     }));
   });
-  svg.append(s("circle", { class: "me", cx: C, cy: C, r: R0 - 8 }));
-  svg.append(s("text", { class: "me-label", x: C, y: C + 6, "text-anchor": "middle", text: "JÁ" }));
+  svg.append(s("circle", { class: "me", cx: C, cy: C, r: R0 - 10 }));
+  svg.append(s("text", { class: "me-label", x: C, y: C + 8, "text-anchor": "middle", text: "JÁ" }));
 
   RINGS.forEach((r) => {
     const people = me.people.filter((p) => p.ring === r.id);
     const n = people.length;
-    // dole necháme mezeru pro popisek kruhu
-    const gap = 0.75, start = Math.PI / 2 + gap / 2, span = Math.PI * 2 - gap;
+    if (!n) return;
+    // dole necháme mezeru pro číslo kruhu
+    const gap = 0.6, start = Math.PI / 2 + gap / 2, span = Math.PI * 2 - gap;
+    const avgW = people.reduce((a, p) => a + pillWidth(p.label, p.bolt), 0) / n;
+    const crowded = n * avgW * 0.8 > 2 * Math.PI * ringMid(r.id);
     people.forEach((p, k) => {
-      const ang = start + ((k + 0.5) / Math.max(1, n)) * span + (n === 1 ? Math.PI * 0.18 * r.id : 0);
-      const cap = Math.floor((2 * Math.PI * ringMid(r.id)) / 46);
-      const rad = ringMid(r.id) + (n > cap ? (k % 2 ? 11 : -11) : 0);
+      // sousední kruhy jsou vůči sobě pootočené, aby se jména nepřekrývala
+      const phase = r.id % 2 ? 0.25 : 0.7;
+      const ang = start + ((k + phase) / n) * span;
+      const w = pillWidth(p.label, p.bolt);
+      // dlouhé jméno nesmí zasahovat do středu „JÁ“
+      const minRad = R0 + 10 + (w / 2) * Math.abs(Math.cos(ang)) + (PILL_H / 2) * Math.abs(Math.sin(ang));
+      const rad = Math.max(minRad, ringMid(r.id) + (crowded ? (k % 2 ? 17 : -17) : 0));
       const x = C + Math.cos(ang) * rad, y = C + Math.sin(ang) * rad;
       const t = typeById(p.type);
-      const syms = p.symbols.map((id) => allSymbols().find((sy) => sy.id === id)?.s).filter(Boolean).join("");
       const g = s("g", { class: "person" + (p.id === editingId ? " sel" : "") });
       g.append(
-        s("circle", { class: "node blend", cx: x, cy: y, r: 18, fill: t ? t.color : "#8A8FAD" }),
-        s("text", { x, y: y + 5, "text-anchor": "middle", text: p.label }),
+        s("rect", { class: "node blend", x: x - w / 2, y: y - PILL_H / 2, width: w, height: PILL_H, rx: PILL_H / 2, fill: t ? t.color : "#8A8FAD" }),
+        s("text", { x: x - (p.bolt ? 9 : 0), y: y + 5, "text-anchor": "middle", text: shortName(p.label) }),
       );
-      if (syms) g.append(s("text", { class: "syms", x, y: y + 33, "text-anchor": "middle", text: syms }));
+      if (p.bolt) g.append(s("text", { class: "bolt", x: x + w / 2 - 15, y: y + 5, "text-anchor": "middle", text: "⚡" }));
       if (interactive) {
         g.setAttribute("tabindex", "0");
         g.setAttribute("role", "button");
-        g.setAttribute("aria-label", "Upravit " + p.label);
+        g.setAttribute("aria-label", p.label + (p.gives ? ". Dává mi: " + p.gives : "") + ". Klepnutím otevřeš.");
+        g.append(s("title", { text: p.gives ? p.label + ": " + p.gives : p.label }));
         g.addEventListener("click", () => editPerson(p));
         g.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); editPerson(p); } });
       }
@@ -233,6 +203,29 @@ export function buildMapSvg(svg, interactive) {
 }
 
 function renderMap() { buildMapSvg($("map-svg"), true); }
+
+// ── zoom mapy: zvětšení SVG uvnitř posuvného rámečku ─────────
+const ZOOMS = [1, 1.5, 2, 3];
+let zoomIdx = 0;
+function initZoom() {
+  const box = $("map-zoom-box");
+  const apply = (idx) => {
+    const cx = (box.scrollLeft + box.clientWidth / 2) / box.scrollWidth;
+    const cy = (box.scrollTop + box.clientHeight / 2) / box.scrollHeight;
+    zoomIdx = Math.max(0, Math.min(ZOOMS.length - 1, idx));
+    $("map-svg").style.width = ZOOMS[zoomIdx] * 100 + "%";
+    box.scrollLeft = cx * box.scrollWidth - box.clientWidth / 2;
+    box.scrollTop = cy * box.scrollHeight - box.clientHeight / 2;
+    box.classList.toggle("zoomed", zoomIdx > 0);
+    $("zoom-out").disabled = zoomIdx === 0;
+    $("zoom-in").disabled = zoomIdx === ZOOMS.length - 1;
+    $("zoom-level").textContent = Math.round(ZOOMS[zoomIdx] * 100) + " %";
+  };
+  $("zoom-in").onclick = () => apply(zoomIdx + 1);
+  $("zoom-out").onclick = () => apply(zoomIdx - 1);
+  $("zoom-reset").onclick = () => apply(0);
+  apply(zoomIdx);
+}
 
 // ── priority ────────────────────────────────────────────────
 let sortable;
@@ -411,16 +404,21 @@ function printPdf() {
     h("div", { class: "who" }, orbs, me.name ? h("b", {}, me.name) : null, [me.cls, date].filter(Boolean).join(" · ")),
   );
 
-  const mapSvg = s("svg", { class: "mapsvg", viewBox: "0 0 640 640" });
+  const mapSvg = s("svg", { class: "mapsvg" });
   buildMapSvg(mapSvg, false);
+  const sorted = me.people.slice().sort((a, b) => a.ring - b.ring || a.label.localeCompare(b.label, "cs"));
   const mapSec = h("section", { class: "pr-section" }, h("h2", {}, "Moje mapa vztahů"),
     h("div", { class: "pr-map" }, mapSvg,
-      h("div", { class: "pr-legend" },
-        h("div", {}, "Míra blízkosti: 1 = nejbližší, 4 = nejvzdálenější"),
-        RINGS.map((r) => h("div", {}, h("b", {}, "Blízkost " + r.id + ": "), me.people.filter((p) => p.ring === r.id).length || "–")),
-        h("div", {}, " "),
-        allSymbols().map((sy) => h("div", {}, h("b", {}, sy.s + " "), sy.label)),
-      )));
+      h("p", { class: "pr-legend" }, "Míra blízkosti: 1 = nejbližší, 4 = nejvzdálenější. ⚡ = vztah mě někdy stojí hodně energie.")));
+  const peopleSec = sorted.length ? h("section", { class: "pr-section pr-allow" }, h("h2", {}, "Moje vztahy a co mi dávají"),
+    h("table", { class: "pr-pairs pr-people" },
+      h("thead", {}, h("tr", {}, h("th", {}, "Kdo"), h("th", {}, "Blízkost"), h("th", {}, "Typ vztahu"), h("th", {}, "Co mi vztah dává"))),
+      h("tbody", {}, sorted.map((p) => h("tr", {},
+        h("td", {}, h("b", {}, p.label), p.bolt ? " ⚡" : ""),
+        h("td", {}, String(p.ring)),
+        h("td", {}, typeById(p.type)?.name || "–"),
+        h("td", {}, p.gives || "–")))),
+    )) : null;
 
   const prioKeys = Object.keys(me.prio);
   const prioSec = h("section", { class: "pr-section" }, h("h2", {}, "Co je pro mě ve vztazích důležité"),
@@ -445,7 +443,7 @@ function printPdf() {
     h("h2", {}, "Na čem podle naší třídy stojí dobré vztahy"),
     h("div", { class: "pr-pillars" }, pillars.map((p) => h("span", {}, p)))) : null;
 
-  root.append(head, mapSec, prioSec, pairsSec, reflSec, pilSec,
+  root.append(...[head, mapSec, peopleSec, prioSec, pairsSec, reflSec, pilSec].filter(Boolean),
     h("p", { class: "pr-foot" }, SITE.title + " · " + SITE.subject + " · " + date));
 
   const old = document.title;
