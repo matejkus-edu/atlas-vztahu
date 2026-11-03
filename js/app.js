@@ -1,7 +1,7 @@
-import { SITE, CLASSES, AXES } from "./config.js?v=20261103e";
-import { DEMO, loadData, submitItem, vote, ls } from "./api.js?v=20261103e";
-import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261103e";
-import { initPersonal } from "./personal.js?v=20261103e";
+import { SITE, CLASSES, AXES } from "./config.js?v=20261103f";
+import { DEMO, loadData, submitItem, vote, ls } from "./api.js?v=20261103f";
+import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261103f";
+import { initPersonal } from "./personal.js?v=20261103f";
 
 const state = {
   types: [],
@@ -276,32 +276,33 @@ function splitPillar(text) {
   return m ? [m[1].trim(), m[2].trim()] : [text, ""];
 }
 
+// Pilíře se nehlasují na webu (hlasuje se v dotazníku), kruh = jeden žák, který pilíř zmínil.
+const mentionLabel = (n) => plural(n, "zmínil " + n + " žák", "zmínili " + n + " žáci", "zmínilo " + n + " žáků");
+
 function renderPillars(items) {
   const row = h("div", { class: "pillars" });
+  // výchozí barvy: pilíře bez typu dostanou postupně barvy typů vztahů
+  const palette = state.types.map((t) => t.color).filter(Boolean);
+  if (!palette.length) palette.push("#0078BF");
+  let k0 = 0;
   items.forEach((i) => {
     const w = i.weight || 1;
     const n = Math.min(14, w);
-    const cols = colorsOf(i);
+    let cols = colorsOf(i);
+    if (!cols.length) cols = [palette[k0++ % palette.length]];
     let [name, rest] = splitPillar(i.text);
     name = name.charAt(0).toLocaleUpperCase("cs") + name.slice(1);
     const orbs = Array.from({ length: n }, (_, k) =>
-      cols.length
-        ? h("span", { class: "orb blend", "--c": cols[k % cols.length], "--i": String(k) })
-        : h("span", { class: "orb general blend", "--i": String(k) }));
-    const btn = h("button", {
-      type: "button", class: "pillar" + (matches(i) ? "" : " dim") + (state.voted.has(i.id) ? " voted" : ""),
-      "aria-label": name + (rest ? ": " + rest : "") + ". " + voteLabel(w) + ". Klepnutím přidáš hlas.",
-    },
+      h("span", { class: "orb blend", "--c": cols[k % cols.length], "--i": String(k) }));
+    row.append(h("div", { class: "pillar" + (matches(i) ? "" : " dim"), role: "group", "aria-label": name + (rest ? ": " + rest : "") + ", " + mentionLabel(w) },
       h("span", { class: "tower", "aria-hidden": "true" },
         h("span", { class: "stack", "--n": String(n) }, orbs),
         h("span", { class: "base" })),
       h("span", { class: "words" },
         h("span", { class: "name" }, name),
         rest ? h("span", { class: "rest" }, rest) : null,
-        h("span", { class: "count" }, voteLabel(w))),
-    );
-    btn.addEventListener("click", () => doVote(i, btn));
-    row.append(btn);
+        h("span", { class: "count" }, mentionLabel(w))),
+    ));
   });
   return row;
 }

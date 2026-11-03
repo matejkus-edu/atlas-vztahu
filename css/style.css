@@ -239,23 +239,18 @@ select:hover, input:hover, textarea:hover { border-color: var(--ink-2); }
 /* podgrid: základny sloupů v jedné řadě leží na stejné čáře, i když se texty pod nimi liší */
 .pillar {
   grid-row: span 2; display: grid; grid-template-rows: subgrid; row-gap: 0; align-items: start;
-  cursor: pointer; background: none; border: 0; padding: 0; font: inherit; color: inherit; text-align: left;
   transition: opacity .3s;
 }
-/* sloup složený z průsvitných kruhů: jeden kruh = jeden hlas */
+/* sloup složený z průsvitných kruhů: jeden kruh = jeden žák, který pilíř zmínil */
 .pillar .stack { position: relative; width: 76px; height: calc(76px + (var(--n) - 1) * 28px); margin-left: 6px; }
 .pillar .orb { position: absolute; left: 0; bottom: calc(var(--i) * 28px); width: 76px; height: 76px; border-radius: 50%; background: var(--c); opacity: .45; }
-.pillar .orb.general { background: var(--ink-2); opacity: .3; }
 .pillar .tower { display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; gap: 0; align-self: end; }
 .pillar .base { width: 88px; height: 5px; border-radius: 3px; background: var(--ink); margin-top: 2px; }
 .pillar .words { display: flex; flex-direction: column; gap: 6px; padding-top: 10px; }
 .pillar .name { font-size: 21px; font-weight: 750; line-height: 1.1; font-variation-settings: "wdth" 82; }
 .pillar .rest { font-size: 14.5px; line-height: 1.35; color: var(--ink-2); }
 .pillar .count { font-size: 13px; color: var(--ink-2); font-weight: 500; }
-.pillar:hover .orb { opacity: .6; }
-.pillar:hover .orb.general { opacity: .42; }
 .pillar.dim { opacity: .2; }
-.pillar.voted .count::before { content: "✓ "; }
 @media (max-width: 560px) {
   .pillars { grid-template-columns: 1fr 1fr; column-gap: 16px; row-gap: 32px; }
 }

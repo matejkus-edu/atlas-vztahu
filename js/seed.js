@@ -59,7 +59,7 @@ export const DEFAULT_SECTIONS = [
   {
     id: "pilire", order: 4, kind: "pillars", open: true, visible: true,
     title: "Na čem vztahy stojí", en: "pillars",
-    subtitle: "Principy, na kterých vztah stojí: jedno slovo a k němu, co znamená. Každý kruh ve sloupu je jeden hlas.",
+    subtitle: "Principy, na kterých vztah stojí: jedno slovo a k němu, co znamená. Každý kruh ve sloupu je jeden žák, který pilíř zmínil.",
   },
   {
     id: "ambivalence", order: 5, kind: "pairs", open: true, visible: true,
