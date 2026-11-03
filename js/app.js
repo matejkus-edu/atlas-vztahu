@@ -1,7 +1,7 @@
-import { SITE, CLASSES, AXES } from "./config.js?v=20261103c";
-import { DEMO, loadData, submitItem, vote, ls } from "./api.js?v=20261103c";
-import { h, s, toast, plural, reducedMotion } from "./ui.js?v=20261103c";
-import { initPersonal } from "./personal.js?v=20261103c";
+import { SITE, CLASSES, AXES } from "./config.js?v=20261103d";
+import { DEMO, loadData, submitItem, vote, ls } from "./api.js?v=20261103d";
+import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261103d";
+import { initPersonal } from "./personal.js?v=20261103d";
 
 const state = {
   types: [],
@@ -42,13 +42,39 @@ async function init() {
   drawHero();
   renderFilters();
   renderAtlas();
+  collapsible($("atlas"), "atlas");
   renderSections();
+  initFoldAll();
+  document.querySelectorAll("#personal section.block").forEach((el) => collapsible(el, "me-" + el.getAttribute("aria-labelledby")));
   initSubmitDialog();
   initPersonal({
     types: state.types,
     pairsSection: state.sections.find((x) => x.kind === "pairs"),
     pillars: () => pillarsFor(ls.get("atlas-me-v1", {}).cls),
   });
+}
+
+// ── sbalit / rozbalit vše ───────────────────────────────────
+function initFoldAll() {
+  const btn = $("fold-all");
+  if (!btn) return;
+  const keys = () => ["atlas", ...state.sections.map((x) => "sec-" + x.id)];
+  const update = () => {
+    const anyOpen = [...document.querySelectorAll("#overview section.block")].some((el) => !el.classList.contains("folded"));
+    btn.textContent = anyOpen ? "Sbalit vše" : "Rozbalit vše";
+    return anyOpen;
+  };
+  btn.onclick = () => {
+    const fold = update();
+    setAllFolded(keys(), fold);
+    document.querySelectorAll("#overview section.block").forEach((el) => {
+      el.classList.toggle("folded", fold);
+      el.querySelector(".fold")?.setAttribute("aria-expanded", String(!fold));
+    });
+    update();
+  };
+  document.getElementById("overview").addEventListener("click", (e) => { if (e.target.closest(".fold")) update(); });
+  update();
 }
 
 // ── hero: jeden orchestrovaný moment při načtení ────────────
@@ -271,7 +297,9 @@ function renderSections() {
     else if (sec.kind === "pillars") body = renderPillars(items);
     else if (sec.kind === "pairs") body = renderPairs(items);
     else body = renderBubbles(items);
-    host.append(h("section", { class: "block wrap", id: "sec-" + sec.id, "aria-labelledby": "h-" + sec.id }, head, body));
+    const el = h("section", { class: "block wrap", id: "sec-" + sec.id, "aria-labelledby": "h-" + sec.id }, head, body);
+    host.append(el);
+    collapsible(el, "sec-" + sec.id);
   });
 }
 

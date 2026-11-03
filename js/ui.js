@@ -51,3 +51,47 @@ export function plural(n, one, few, many) {
 
 export const reducedMotion = () =>
   window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// ── sbalitelné oddíly ───────────────────────────────────────
+// Nadpis oddílu se změní na tlačítko; stav se pamatuje v prohlížeči.
+const FOLD_KEY = "atlas-folded";
+function foldedSet() {
+  try { return new Set(JSON.parse(localStorage.getItem(FOLD_KEY) || "[]")); } catch { return new Set(); }
+}
+function saveFolded(set) {
+  try { localStorage.setItem(FOLD_KEY, JSON.stringify([...set])); } catch {}
+}
+
+export function collapsible(section, key) {
+  const h2 = section.querySelector(".block-head h2");
+  if (!h2 || h2.querySelector(".fold")) return;
+  if (!section.id) section.id = "blk-" + key;
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "fold";
+  btn.setAttribute("aria-controls", section.id);
+  while (h2.firstChild) btn.append(h2.firstChild);
+  const chev = document.createElement("span");
+  chev.className = "chev";
+  chev.setAttribute("aria-hidden", "true");
+  btn.append(chev);
+  h2.append(btn);
+  const apply = (folded) => {
+    section.classList.toggle("folded", folded);
+    btn.setAttribute("aria-expanded", String(!folded));
+  };
+  apply(foldedSet().has(key));
+  btn.addEventListener("click", () => {
+    const set = foldedSet();
+    const folded = !set.has(key);
+    folded ? set.add(key) : set.delete(key);
+    saveFolded(set);
+    apply(folded);
+  });
+}
+
+export function setAllFolded(keys, folded) {
+  const set = foldedSet();
+  keys.forEach((k) => (folded ? set.add(k) : set.delete(k)));
+  saveFolded(set);
+}

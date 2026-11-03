@@ -150,6 +150,24 @@ select:hover, input:hover, textarea:hover { border-color: var(--ink-2); }
   margin: 0; font-size: clamp(32px, 5.2vw, 56px); line-height: 1.05; font-weight: 750; text-wrap: balance;
   font-variation-settings: "wdth" 78, "opsz" 72; letter-spacing: -0.01em; max-width: 20ch;
 }
+/* sbalitelné oddíly */
+.fold {
+  all: unset; box-sizing: border-box; cursor: pointer; display: inline;
+  font: inherit; color: inherit; letter-spacing: inherit;
+}
+.fold:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; border-radius: 6px; }
+.fold .chev {
+  display: inline-block; vertical-align: .22em; width: .32em; height: .32em; margin-left: .45em;
+  border-right: .09em solid currentColor; border-bottom: .09em solid currentColor;
+  transform: translateY(-.12em) rotate(45deg); transition: transform .25s; opacity: .45;
+}
+.fold:hover .chev { opacity: 1; }
+.folded .fold .chev { transform: translateY(-.02em) rotate(-45deg); }
+.block.folded { padding-top: clamp(28px, 4vw, 44px); }
+.block.folded .block-head { margin-bottom: 0; }
+.block.folded > :not(.block-head), .block.folded .block-head > :not(h2) { display: none; }
+.fold-all { padding: 7px 14px; font-size: 14px; flex: none; }
+@media (prefers-reduced-motion: reduce) { .fold .chev { transition: none; } }
 .block-sub { margin: 0; max-width: 62ch; color: var(--ink-2); }
 .block-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 6px; }
 .demo-note { margin: 24px auto 0; color: var(--ink-2); font-size: 15px; }
