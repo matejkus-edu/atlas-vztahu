@@ -1,7 +1,7 @@
-import { SITE, CLASSES, AXES } from "./config.js?v=20261103b";
-import { DEMO, loadData, submitItem, vote, ls } from "./api.js?v=20261103b";
-import { h, s, toast, plural, reducedMotion } from "./ui.js?v=20261103b";
-import { initPersonal } from "./personal.js?v=20261103b";
+import { SITE, CLASSES, AXES } from "./config.js?v=20261103c";
+import { DEMO, loadData, submitItem, vote, ls } from "./api.js?v=20261103c";
+import { h, s, toast, plural, reducedMotion } from "./ui.js?v=20261103c";
+import { initPersonal } from "./personal.js?v=20261103c";
 
 const state = {
   types: [],
@@ -467,14 +467,15 @@ function initSubmitDialog() {
 
 const HINTS = {
   bubbles: "Napiš krátce jednu věc. Podobné příspěvky vyučující sloučí, takže se počítají dohromady.",
-  pillars: "Formuluj pilíř tak, aby platilo: „Dobrý vztah je takový, kde…“. Můžeš začít názvem a dvojtečkou.",
+  pillars: "Napiš princip jedním slovem, za dvojtečku co znamená. Mělo by platit: „Dobrý vztah je takový, kde…“",
+  davame: "Napiš konkrétní čin, nejlépe slovesem: co uděláš ty, aby vztah fungoval. Podobné příspěvky vyučující sloučí.",
   pairs: "Vyber si jeden svůj vztah. Piš konkrétně a bez jmen. Odesílá se anonymně, uvidí se jen typ vztahu a třída.",
 };
 
 function openSubmit(sec) {
   currentSection = sec;
   $("submit-title").textContent = sec.title;
-  $("submit-hint").textContent = HINTS[sec.kind] || HINTS.bubbles;
+  $("submit-hint").textContent = HINTS[sec.id] || HINTS[sec.kind] || HINTS.bubbles;
   $("submit-msg").textContent = "";
   $("submit-msg").className = "form-msg";
   const fields = $("submit-fields");
@@ -492,7 +493,7 @@ function openSubmit(sec) {
   } else {
     fields.append(h("label", {}, "Text", h("textarea", {
       name: "text", maxlength: 200, required: true, rows: 3,
-      placeholder: sec.kind === "pillars" ? "Např. Důvěra: můžeme se na sebe spolehnout" : "Např. Můžu se svěřit, když mám špatný den",
+      placeholder: sec.kind === "pillars" ? "Např. Důvěra: můžeme se na sebe spolehnout" : sec.id === "davame" ? "Např. Zeptám se, jak se druhý má" : sec.id === "nici" ? "Např. Pomlouvání za zády" : "Např. Můžu se svěřit, když mám špatný den",
     })));
   }
   const tp = $("submit-types");

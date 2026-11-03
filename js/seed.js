@@ -48,8 +48,8 @@ export const DEFAULT_SECTIONS = [
   },
   {
     id: "davame", order: 2, kind: "bubbles", open: true, visible: true,
-    title: "Co do vztahů dáváme a co je podporuje", en: "what we give",
-    subtitle: "Vztah nevzniká sám od sebe. Co pro něj děláme my?",
+    title: "Co pro vztahy děláme", en: "what we do",
+    subtitle: "Konkrétní činy: co uděláš, aby vztah fungoval. Čím větší kruh, tím víc lidí to zmínilo.",
   },
   {
     id: "nici", order: 3, kind: "bubbles", open: true, visible: true,
@@ -59,7 +59,7 @@ export const DEFAULT_SECTIONS = [
   {
     id: "pilire", order: 4, kind: "pillars", open: true, visible: true,
     title: "Na čem vztahy stojí", en: "pillars",
-    subtitle: "Pilíře dobrého vztahu. Výška sloupu odpovídá tomu, kolikrát se na něm třídy shodly.",
+    subtitle: "Principy, na kterých vztah stojí: jedno slovo a k němu, co znamená. Každý kruh ve sloupu je jeden hlas.",
   },
   {
     id: "ambivalence", order: 5, kind: "pairs", open: true, visible: true,
