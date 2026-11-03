@@ -26,20 +26,27 @@ export const AXES = [
   { id: "choice", left: "volený (dobrovolný)", right: "daný (nedobrovolný)", en: "chosen ↔ given" },
 ];
 
-// Hodnoty pro „Moje priority“ (osobní část).
+// Hodnoty pro „Moje priority“ (osobní část). Vychází z pilířů, které jmenovaly třídy.
+// Při změně ponech stará id (respekt, duvera…), aby žákům zůstalo uložené pořadí.
 export const VALUES = [
-  { id: "respekt", name: "Respekt", en: "respect" },
-  { id: "duvera", name: "Důvěra", en: "trust" },
-  { id: "spolehlivost", name: "Spolehlivost", en: "reliability", hint: "držet slovo" },
-  { id: "vzajemnost", name: "Vzájemnost", en: "reciprocity", hint: "dávat i brát" },
-  { id: "uprimnost", name: "Upřímnost", en: "honesty" },
-  { id: "soukromi", name: "Soukromí a vlastní prostor", en: "privacy" },
-  { id: "cas", name: "Společně trávený čas", en: "time together" },
-  { id: "podpora", name: "Podpora v těžkých chvílích", en: "support" },
-  { id: "zajmy", name: "Společné zájmy a hodnoty", en: "shared interests" },
-  { id: "odpusteni", name: "Odpuštění", en: "forgiveness" },
-  { id: "zabava", name: "Zábava", en: "fun" },
+  { id: "duvera", name: "Důvěra", en: "trust", hint: "můžu se spolehnout, že mi neublíží" },
+  { id: "respekt", name: "Respekt", en: "respect", hint: "vzájemný, i k sobě samému" },
+  { id: "podpora", name: "Podpora", en: "support", hint: "i ta emoční, hlavně v těžkých chvílích" },
+  { id: "komunikace", name: "Komunikace", en: "communication", hint: "umíme si o věcech říct" },
+  { id: "uprimnost", name: "Upřímnost", en: "honesty", hint: "otevřenost, nehrát si na něco" },
+  { id: "bezpeci", name: "Bezpečí", en: "safety", hint: "cítím se v klidu a v bezpečí" },
   { id: "prijeti", name: "Přijetí", en: "acceptance", hint: "můžu být sám/sama sebou" },
+  { id: "pochopeni", name: "Pochopení a zájem", en: "understanding", hint: "druhý se zajímá a snaží se mi rozumět" },
+  { id: "laska", name: "Láska", en: "love", hint: "oboustranná a dávaná najevo" },
+  { id: "fyzicka", name: "Fyzická blízkost", en: "physical intimacy", hint: "dotek, přitažlivost, sex" },
+  { id: "spolehlivost", name: "Spolehlivost", en: "reliability", hint: "držet slovo, být k zastižení" },
+  { id: "loajalita", name: "Loajalita", en: "loyalty", hint: "stojíme při sobě" },
+  { id: "vzajemnost", name: "Vzájemnost", en: "reciprocity", hint: "stejné úsilí na obou stranách" },
+  { id: "laskavost", name: "Laskavost a ochota pomoct", en: "kindness" },
+  { id: "zabava", name: "Humor a zábava", en: "fun" },
+  { id: "cas", name: "Společný čas a zájmy", en: "time together", hint: "zážitky, koníčky, hodnoty" },
+  { id: "soukromi", name: "Soukromí a vlastní prostor", en: "privacy" },
+  { id: "odpusteni", name: "Odpuštění", en: "forgiveness" },
 ];
 
 // Symboly do osobní mapy vztahů.
