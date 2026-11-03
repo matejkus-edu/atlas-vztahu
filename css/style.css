@@ -239,22 +239,29 @@ select:hover, input:hover, textarea:hover { border-color: var(--ink-2); }
 .empty { padding: 28px; border: 1.5px dashed var(--line); border-radius: var(--r-md); color: var(--ink-2); max-width: 62ch; }
 
 /* ── pilíře ───────────────────────────────────────────────── */
-.pillars { display: flex; flex-wrap: wrap; gap: 28px 18px; align-items: flex-end; padding-bottom: 8px; }
-.pillar { flex: 0 0 168px; display: flex; flex-direction: column; gap: 12px; cursor: pointer; background: none; border: 0; padding: 0; font: inherit; color: inherit; text-align: left; transition: opacity .3s; }
-.pillar .shaft { position: relative; height: calc(90px + var(--w) * 260px); border-radius: 84px 84px 6px 6px; overflow: hidden; background: var(--paper-2); }
-.pillar .stripe { position: absolute; inset: 0; background: var(--c); opacity: .55; }
-.pillar .shaft.general { background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 14px); opacity: .55; }
-.pillar .shaft .count { position: absolute; left: 0; right: 0; bottom: 10px; text-align: center; font-size: 13px; font-weight: 600; color: var(--ink); }
-.pillar .name { font-size: 20px; font-weight: 750; line-height: 1.05; font-variation-settings: "wdth" 82; }
-.pillar .rest { font-size: 14.5px; line-height: 1.35; color: var(--ink-2); margin-top: -6px; }
+.pillars { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); column-gap: 28px; row-gap: 40px; }
+/* podgrid: základny sloupů v jedné řadě leží na stejné čáře, i když se texty pod nimi liší */
+.pillar {
+  grid-row: span 2; display: grid; grid-template-rows: subgrid; row-gap: 0; align-items: start;
+  cursor: pointer; background: none; border: 0; padding: 0; font: inherit; color: inherit; text-align: left;
+  transition: opacity .3s;
+}
+/* sloup složený z průsvitných kruhů: jeden kruh = jeden hlas */
+.pillar .stack { position: relative; width: 76px; height: calc(76px + (var(--n) - 1) * 28px); margin-left: 6px; }
+.pillar .orb { position: absolute; left: 0; bottom: calc(var(--i) * 28px); width: 76px; height: 76px; border-radius: 50%; background: var(--c); opacity: .45; }
+.pillar .orb.general { background: var(--ink-2); opacity: .3; }
+.pillar .tower { display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; gap: 0; align-self: end; }
+.pillar .base { width: 88px; height: 5px; border-radius: 3px; background: var(--ink); margin-top: 2px; }
+.pillar .words { display: flex; flex-direction: column; gap: 6px; padding-top: 10px; }
+.pillar .name { font-size: 21px; font-weight: 750; line-height: 1.1; font-variation-settings: "wdth" 82; }
+.pillar .rest { font-size: 14.5px; line-height: 1.35; color: var(--ink-2); }
+.pillar .count { font-size: 13px; color: var(--ink-2); font-weight: 500; }
+.pillar:hover .orb { opacity: .6; }
+.pillar:hover .orb.general { opacity: .42; }
 .pillar.dim { opacity: .2; }
 .pillar.voted .count::before { content: "✓ "; }
-@media (max-width: 640px) {
-  .pillars { flex-direction: column; align-items: stretch; overflow: visible; }
-  .pillar { flex: none; display: grid; grid-template-columns: 1fr; gap: 6px; }
-  .pillar .shaft { height: 34px; width: calc(28% + var(--w) * 72%); border-radius: 6px 34px 34px 6px; }
-  .pillar .shaft .count { bottom: auto; top: 7px; text-align: right; right: 14px; left: auto; }
-  .pillar .rest { margin-top: 0; }
+@media (max-width: 560px) {
+  .pillars { grid-template-columns: 1fr 1fr; column-gap: 16px; row-gap: 32px; }
 }
 
 /* ── rub a líc ────────────────────────────────────────────── */

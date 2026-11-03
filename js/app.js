@@ -295,6 +295,7 @@ async function doVote(item, el) {
   const c = el.querySelector(".count");
   if (c) c.textContent = voteLabel(item.weight);
   toast("Přidal/a jsi hlas. Díky!");
+  if (el.classList.contains("pillar")) renderSections();
   try { await vote(item.id); } catch (e) { toast("Hlas se nepodařilo uložit: " + e.message); }
 }
 
@@ -339,21 +340,29 @@ function splitPillar(text) {
 }
 
 function renderPillars(items) {
-  const max = Math.max(...items.map((i) => i.weight || 1));
   const row = h("div", { class: "pillars" });
   items.forEach((i) => {
     const w = i.weight || 1;
+    const n = Math.min(14, w);
     const cols = colorsOf(i);
-    const [name, rest] = splitPillar(i.text);
-    const shaft = h("div", { class: "shaft" + (cols.length ? "" : " general") },
-      cols.map((c, k) => h("span", { class: "stripe blend", "--c": c, style: { left: (k / cols.length) * 100 + "%", width: 100 / cols.length + "%", right: "auto" } })),
-      h("span", { class: "count" }, voteLabel(w)),
-    );
+    let [name, rest] = splitPillar(i.text);
+    name = name.charAt(0).toLocaleUpperCase("cs") + name.slice(1);
+    const orbs = Array.from({ length: n }, (_, k) =>
+      cols.length
+        ? h("span", { class: "orb blend", "--c": cols[k % cols.length], "--i": String(k) })
+        : h("span", { class: "orb general blend", "--i": String(k) }));
     const btn = h("button", {
       type: "button", class: "pillar" + (matches(i) ? "" : " dim") + (state.voted.has(i.id) ? " voted" : ""),
-      "--w": String(w / max),
-      "aria-label": i.text + ". " + voteLabel(w) + ". Klepnutím přidáš hlas.",
-    }, shaft, h("span", { class: "name" }, name), rest ? h("span", { class: "rest" }, rest) : null);
+      "aria-label": name + (rest ? ": " + rest : "") + ". " + voteLabel(w) + ". Klepnutím přidáš hlas.",
+    },
+      h("span", { class: "tower", "aria-hidden": "true" },
+        h("span", { class: "stack", "--n": String(n) }, orbs),
+        h("span", { class: "base" })),
+      h("span", { class: "words" },
+        h("span", { class: "name" }, name),
+        rest ? h("span", { class: "rest" }, rest) : null,
+        h("span", { class: "count" }, voteLabel(w))),
+    );
     btn.addEventListener("click", () => doVote(i, btn));
     row.append(btn);
   });
