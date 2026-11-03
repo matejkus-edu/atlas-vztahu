@@ -188,32 +188,10 @@ select:hover, input:hover, textarea:hover { border-color: var(--ink-2); }
 .btn-add::before { content: "+"; font-size: 1.25em; line-height: 0; font-weight: 500; }
 .form-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 
-/* ── atlas ────────────────────────────────────────────────── */
-.atlas-controls { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-bottom: 12px; font-size: 15px; color: var(--ink-2); }
-.atlas-controls label { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; max-width: 100%; }
-.atlas-controls select { max-width: 100%; min-width: 0; }
-.atlas-plane { border-radius: var(--r-md); background: var(--paper-2); }
-#atlas-svg { display: block; width: 100%; height: auto; }
-#atlas-svg .axis { stroke: var(--line); stroke-width: 1.5; }
-#atlas-svg .axis-label { fill: var(--ink-2); font-size: 17px; font-family: var(--font); }
-#atlas-svg .type-blob { cursor: pointer; transition: opacity .35s, transform .7s cubic-bezier(.2, .8, .2, 1); }
-#atlas-svg .type-blob ellipse { transition: rx .7s cubic-bezier(.2, .8, .2, 1), ry .7s cubic-bezier(.2, .8, .2, 1); }
-#atlas-svg .type-name { font-family: var(--font); font-size: 19px; font-weight: 650; fill: var(--ink); paint-order: stroke; stroke: var(--paper-2); stroke-width: 5px; stroke-linejoin: round; pointer-events: none; }
-#atlas-svg .type-blob.dim { opacity: .18; }
-@media (max-width: 640px) {
-  #atlas-svg .type-name { font-size: 40px; stroke-width: 9px; }
-  #atlas-svg .axis-label { font-size: 30px; }
-}
-#atlas-svg .type-blob.sel ellipse { stroke: var(--ink); stroke-width: 2.5; }
-#atlas-svg .type-blob:focus-visible { outline: none; }
-#atlas-svg .type-blob:focus-visible ellipse { stroke: var(--focus); stroke-width: 4; }
-@media (prefers-reduced-motion: reduce) {
-  #atlas-svg .type-blob, #atlas-svg .type-blob ellipse, .hero-orbs circle { transition: none; }
-}
-
+/* ── typy vztahů ─────────────────────────────────────────── */
 .type-profiles {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 28px 32px; margin-top: 32px;
+  gap: 32px 32px;
 }
 .profile { --c: var(--ink); cursor: pointer; text-align: left; font: inherit; color: inherit; background: none; border: 0; padding: 0; }
 .profile h3 { margin: 0 0 6px; font-size: 22px; line-height: 1.15; font-weight: 700; font-variation-settings: "wdth" 85; display: grid; grid-template-columns: 18px 1fr; align-items: start; gap: 10px; text-wrap: balance; }

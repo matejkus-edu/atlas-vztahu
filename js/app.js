@@ -1,7 +1,7 @@
-import { SITE, CLASSES, AXES } from "./config.js?v=20261103d";
-import { DEMO, loadData, submitItem, vote, ls } from "./api.js?v=20261103d";
-import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261103d";
-import { initPersonal } from "./personal.js?v=20261103d";
+import { SITE, CLASSES, AXES } from "./config.js?v=20261103e";
+import { DEMO, loadData, submitItem, vote, ls } from "./api.js?v=20261103e";
+import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261103e";
+import { initPersonal } from "./personal.js?v=20261103e";
 
 const state = {
   types: [],
@@ -9,8 +9,6 @@ const state = {
   items: [],
   filterType: null,
   filterClass: ls.get("atlas-class-filter", "all"),
-  axisX: ls.get("atlas-axis-x", "choice"),
-  axisY: ls.get("atlas-axis-y", "closeness"),
   pairMark: "all",
   voted: new Set(ls.get("atlas-voted", [])),
 };
@@ -151,67 +149,9 @@ function setType(id) {
   renderSections();
 }
 
-// ── atlas typů ──────────────────────────────────────────────
-const narrow = () => window.matchMedia("(max-width: 640px)").matches;
-const PLANE = { w: 1000, h: 620, padX: 70, padY: 62 };
-function sizePlane() {
-  const n = narrow();
-  PLANE.h = n ? 1300 : 620;
-  PLANE.padX = n ? 110 : 70;
-  PLANE.padY = n ? 110 : 62;
-}
-const sx = (v) => PLANE.padX + ((v + 1) / 2) * (PLANE.w - 2 * PLANE.padX);
-const sy = (v) => PLANE.padY + ((v + 1) / 2) * (PLANE.h - 2 * PLANE.padY);
-
+// ── typy vztahů ─────────────────────────────────────────────
+// Každý typ má svou kartu se čtyřmi osami; klepnutím se filtruje celý přehled.
 function renderAtlas() {
-  const ax = $("axis-x"), ay = $("axis-y");
-  [ax, ay].forEach((sel) => {
-    sel.innerHTML = "";
-    AXES.forEach((a) => sel.append(h("option", { value: a.id }, a.left + " ↔ " + a.right)));
-  });
-  ax.value = state.axisX; ay.value = state.axisY;
-  const onAxis = () => {
-    if (ax.value === ay.value) {
-      const other = AXES.find((a) => a.id !== ax.value).id;
-      if (document.activeElement === ax) ay.value = other; else ax.value = other;
-    }
-    state.axisX = ax.value; state.axisY = ay.value;
-    ls.set("atlas-axis-x", ax.value); ls.set("atlas-axis-y", ay.value);
-    layoutAtlas();
-  };
-  ax.onchange = onAxis; ay.onchange = onAxis;
-
-  const svg = $("atlas-svg");
-  sizePlane();
-  svg.setAttribute("viewBox", `0 0 ${PLANE.w} ${PLANE.h}`);
-  svg.innerHTML = "";
-  const cx = PLANE.w / 2, cy = PLANE.h / 2;
-  const n = narrow();
-  svg.append(
-    s("line", { class: "axis", x1: 24, y1: cy, x2: PLANE.w - 24, y2: cy }),
-    s("line", { class: "axis", x1: cx, y1: 18, x2: cx, y2: PLANE.h - 18 }),
-    s("text", { class: "axis-label", id: "lbl-left", x: 30, y: cy - (n ? 22 : 12) }),
-    s("text", { class: "axis-label", id: "lbl-right", x: PLANE.w - 30, y: cy + (n ? 46 : -12), "text-anchor": "end" }),
-    s("text", { class: "axis-label", id: "lbl-top", x: cx + 14, y: n ? 52 : 34 }),
-    s("text", { class: "axis-label", id: "lbl-bottom", x: cx + 14, y: PLANE.h - (n ? 30 : 22) }),
-  );
-  const blobs = s("g", { id: "blobs" });
-  svg.append(blobs);
-  state.types.forEach((t) => {
-    const g = s("g", {
-      class: "type-blob", "data-type": t.id, tabindex: 0, role: "button",
-      "aria-label": t.name + (state.filterType === t.id ? ", vybráno" : ""),
-      onclick: () => setType(state.filterType === t.id ? null : t.id),
-      onkeydown: (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setType(state.filterType === t.id ? null : t.id); } },
-    });
-    g.append(
-      s("ellipse", { cx: 0, cy: 0, rx: 40, ry: 40, fill: t.color, "fill-opacity": 0.5, class: "blend" }),
-      s("text", { class: "type-name", "text-anchor": "middle", "dominant-baseline": "middle", text: t.name }),
-    );
-    blobs.append(g);
-  });
-  layoutAtlas();
-
   const prof = $("type-profiles");
   prof.innerHTML = "";
   state.types.forEach((t) => {
@@ -232,39 +172,8 @@ function renderAtlas() {
   updateAtlasDim();
 }
 
-let wasNarrow = null;
-window.addEventListener("resize", () => {
-  const n = narrow();
-  if (wasNarrow !== null && n !== wasNarrow && state.types.length) renderAtlas();
-  wasNarrow = n;
-});
-
-function layoutAtlas() {
-  wasNarrow = narrow();
-  const X = AXES.find((a) => a.id === state.axisX), Y = AXES.find((a) => a.id === state.axisY);
-  $("lbl-left").textContent = X.left;
-  $("lbl-right").textContent = X.right;
-  $("lbl-top").textContent = Y.left;
-  $("lbl-bottom").textContent = Y.right;
-  document.querySelectorAll("#blobs .type-blob").forEach((g) => {
-    const t = typeById(g.dataset.type);
-    const [xl, xh] = t[X.id] || [0, 0], [yl, yh] = t[Y.id] || [0, 0];
-    const cx = sx((xl + xh) / 2), cy = sy((yl + yh) / 2);
-    const rx = Math.max(narrow() ? 80 : 46, (Math.abs(xh - xl) / 2) * (PLANE.w - 2 * PLANE.padX) / 2 + 26);
-    const ry = Math.max(narrow() ? 70 : 38, (Math.abs(yh - yl) / 2) * (PLANE.h - 2 * PLANE.padY) / 2 + 22);
-    g.style.transform = `translate(${cx}px, ${cy}px)`;
-    const e = g.querySelector("ellipse");
-    e.style.rx = rx + "px"; e.style.ry = ry + "px";
-    e.setAttribute("rx", rx); e.setAttribute("ry", ry);
-  });
-}
-
 function updateAtlasDim() {
   const f = state.filterType;
-  document.querySelectorAll("#blobs .type-blob").forEach((g) => {
-    g.classList.toggle("dim", !!f && g.dataset.type !== f);
-    g.classList.toggle("sel", g.dataset.type === f);
-  });
   document.querySelectorAll("#type-profiles .profile").forEach((p) => {
     p.classList.toggle("dim", !!f && p.dataset.type !== f);
     p.setAttribute("aria-pressed", String(p.dataset.type === f));
