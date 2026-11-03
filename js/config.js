@@ -4,7 +4,7 @@
 // Po nasazení Apps Scriptu sem vlož URL webové aplikace (končí /exec).
 // Dokud je prázdné, web běží v DEMO režimu: data se ukládají jen
 // v tomto prohlížeči a jsou předvyplněná ukázkovým obsahem.
-export const API_URL = "";
+export const API_URL = "https://script.google.com/macros/s/AKfycbzytzzJF9VDjq-MThohZF93wpCDry1LV8LgRCP-EDIRprRKXxnoeB9NTbL9zpe8vEPnZw/exec";
 
 // Třídy, mezi kterými se dá filtrovat a které žák volí při odesílání.
 export const CLASSES = ["L1A", "L1B", "L1C"];
