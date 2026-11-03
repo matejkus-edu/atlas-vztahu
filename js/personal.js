@@ -1,7 +1,7 @@
 // Osobní část: ukládá se jen do localStorage tohoto prohlížeče.
-import { CLASSES, VALUES, SYMBOLS, RINGS, SITE } from "./config.js?v=20261103i";
-import { ls, submitItem } from "./api.js?v=20261103i";
-import { h, s, toast } from "./ui.js?v=20261103i";
+import { CLASSES, VALUES, SYMBOLS, RINGS, SITE } from "./config.js?v=20261103j";
+import { ls, submitItem } from "./api.js?v=20261103j";
+import { h, s, toast } from "./ui.js?v=20261103j";
 
 const KEY = "atlas-me-v1";
 const $ = (id) => document.getElementById(id);

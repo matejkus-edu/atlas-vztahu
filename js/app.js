@@ -1,7 +1,7 @@
-import { SITE, CLASSES, AXES } from "./config.js?v=20261103i";
-import { DEMO, loadData, submitItem, vote, ls } from "./api.js?v=20261103i";
-import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261103i";
-import { initPersonal } from "./personal.js?v=20261103i";
+import { SITE, CLASSES, AXES } from "./config.js?v=20261103j";
+import { DEMO, loadData, submitItem, vote, ls } from "./api.js?v=20261103j";
+import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261103j";
+import { initPersonal } from "./personal.js?v=20261103j";
 
 const state = {
   types: [],
@@ -76,27 +76,14 @@ function initFoldAll() {
 }
 
 // ── hero: jeden orchestrovaný moment při načtení ────────────
+// Kruhy jsou přímo v index.html, aby byly vidět hned při načtení.
+// Po načtení dat jen převezmou barvy typů vztahů (bez pohybu).
 function drawHero() {
-  const svg = $("hero-orbs");
-  const cols = state.types.length ? state.types.map((t) => t.color) : ["#FF6C2F", "#E8B900", "#FF48B0", "#0078BF", "#00A95C", "#765BA7"];
-  const spots = [
-    [890, 210, 190], [1055, 300, 160], [770, 330, 150], [975, 120, 120],
-    [1150, 150, 110], [850, 450, 120], [1080, 470, 95], [690, 160, 80],
-  ];
-  svg.innerHTML = "";
-  const nodes = cols.slice(0, spots.length).map((c, i) => {
-    const [x, y, r] = spots[i];
-    const el = s("circle", { cx: x, cy: y, r, fill: c, "fill-opacity": 0.46, class: "blend" });
-    const ang = (i / cols.length) * Math.PI * 2;
-    el.style.transform = `translate(${Math.cos(ang) * 420}px, ${Math.sin(ang) * 260}px)`;
-    svg.append(el);
-    return el;
+  if (!state.types.length) return;
+  document.querySelectorAll("#hero-orbs circle").forEach((el, i) => {
+    const t = state.types[i % state.types.length];
+    if (t?.color) el.setAttribute("fill", t.color);
   });
-  if (reducedMotion()) nodes.forEach((n) => (n.style.transform = "none"));
-  else requestAnimationFrame(() => requestAnimationFrame(() => nodes.forEach((n, i) => {
-    n.style.transitionDelay = i * 60 + "ms";
-    n.style.transform = "translate(0,0)";
-  })));
 }
 
 // ── přepínání částí ─────────────────────────────────────────
