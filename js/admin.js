@@ -1,6 +1,6 @@
-import { CLASSES, AXES } from "./config.js";
-import { DEMO, admin } from "./api.js";
-import { h, toast } from "./ui.js";
+import { CLASSES, AXES } from "./config.js?v=20261103b";
+import { DEMO, admin } from "./api.js?v=20261103b";
+import { h, toast } from "./ui.js?v=20261103b";
 
 const $ = (id) => document.getElementById(id);
 let KEY = "";

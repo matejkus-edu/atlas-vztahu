@@ -62,6 +62,8 @@ Adresu Apps Scriptu doplníš přímo na GitHubu: otevři `js/config.js`, klikni
 
 ## Úpravy
 
+- Po každé změně v `css/` nebo `js/` zvyš číslo verze `?v=…` v `index.html`, `admin.html` a v řádcích `import … from "./….js?v=…"` v souborech `js/` (všude stejné). Jinak prohlížeče ještě až 10 minut drží starou verzi.
+
 - Názvy, třídy, hodnoty pro priority a symboly mapy najdeš v `js/config.js`.
 - Výchozí typy a oddíly jsou v `js/seed.js` (demo) a na konci `Code.gs` (pro `setup`).
 - Barvy, písmo a vzhled jsou v `css/style.css`.
