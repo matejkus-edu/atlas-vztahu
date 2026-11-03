@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Atlas vztahů</title>
+  <meta name="description" content="Společný přehled třídy k tématu vztahy: typy vztahů, co od nich čekáme, co do nich dáváme, co je ničí a na čem stojí.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='24' cy='32' r='18' fill='%23FF48B0' fill-opacity='.8'/%3E%3Ccircle cx='40' cy='32' r='18' fill='%230078BF' fill-opacity='.7'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip" href="#content">Přeskočit na obsah</a>
+
+  <header class="hero" id="top">
+    <svg class="hero-orbs" id="hero-orbs" viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+    <div class="hero-text wrap">
+      <p class="hero-subject" id="site-subject"></p>
+      <h1 id="site-title">Atlas vztahů</h1>
+      <p class="hero-lead" id="site-subtitle"></p>
+    </div>
+  </header>
+
+  <nav class="bar" aria-label="Zobrazení a filtry">
+    <div class="bar-inner wrap">
+      <div class="mode" role="tablist" aria-label="Část webu">
+        <button role="tab" id="tab-overview" aria-selected="true" aria-controls="overview">Přehled třídy</button>
+        <button role="tab" id="tab-personal" aria-selected="false" aria-controls="personal">Moje vztahy</button>
+      </div>
+      <div class="filters" id="filters">
+        <label class="class-filter">
+          <span class="visually-hidden">Třída</span>
+          <select id="class-filter"></select>
+        </label>
+        <div class="type-chips" id="type-chips" role="group" aria-label="Filtr podle typu vztahu"></div>
+      </div>
+    </div>
+  </nav>
+
+  <div id="content">
+    <main id="overview" role="tabpanel" aria-labelledby="tab-overview">
+      <p class="demo-note wrap" id="demo-note" hidden>
+        Ukázkový režim: data jsou smyšlená a ukládají se jen v tomto prohlížeči.
+        Ostrou verzi zapneš nastavením adresy serveru v souboru <code>js/config.js</code>.
+      </p>
+
+      <section class="block wrap" id="atlas" aria-labelledby="atlas-title">
+        <header class="block-head">
+          <h2 id="atlas-title">Typy vztahů <span class="en">(types of relationships)</span></h2>
+          <p class="block-sub">Každý typ vztahu leží někde mezi dvěma póly. Vyber osy a podívej se, kde se jednotlivé typy potkávají. Klepnutím na typ vyfiltruješ celý přehled.</p>
+        </header>
+        <div class="atlas-controls">
+          <label>Vodorovně <select id="axis-x"></select></label>
+          <label>Svisle <select id="axis-y"></select></label>
+        </div>
+        <div class="atlas-plane">
+          <svg id="atlas-svg" viewBox="0 0 1000 620" role="img" aria-label="Rozložení typů vztahů na dvou osách"></svg>
+        </div>
+        <div class="type-profiles" id="type-profiles"></div>
+      </section>
+
+      <div id="sections"></div>
+    </main>
+
+    <main id="personal" role="tabpanel" aria-labelledby="tab-personal" hidden>
+      <div class="wrap personal-intro">
+        <h2>Moje vztahy</h2>
+        <p>Tahle část se ukládá jen v tomto prohlížeči. Nikdo jiný ji nevidí, dokud ji sám nebo sama neodešleš nebo nestáhneš jako PDF.</p>
+        <div class="me-fields">
+          <label>Jméno do PDF <span class="muted">(nepovinné, nikam se neodesílá)</span>
+            <input id="me-name" type="text" maxlength="60" autocomplete="off">
+          </label>
+          <label>Moje třída
+            <select id="me-class"></select>
+          </label>
+        </div>
+      </div>
+
+      <section class="block wrap" aria-labelledby="map-title">
+        <header class="block-head">
+          <h2 id="map-title">Moje mapa vztahů</h2>
+          <p class="block-sub">Do kruhů zapiš lidi podle toho, jak blízký vztah s nimi máš. Stačí iniciály nebo značka. Symboly ukazují, co ti vztah dává.</p>
+        </header>
+        <div class="map-layout">
+          <div class="map-canvas">
+            <svg id="map-svg" class="mapsvg" viewBox="0 0 640 640" role="img" aria-label="Moje mapa vztahů"></svg>
+          </div>
+          <form class="map-form panel" id="map-form" autocomplete="off">
+            <h3 id="map-form-title">Přidat člověka</h3>
+            <label>Iniciály nebo značka
+              <input id="p-label" type="text" maxlength="4" required>
+            </label>
+            <label>Kruh
+              <select id="p-ring"></select>
+            </label>
+            <label>Typ vztahu
+              <select id="p-type"></select>
+            </label>
+            <fieldset class="symbols">
+              <legend>Co mi vztah dává</legend>
+              <div id="p-symbols"></div>
+            </fieldset>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-ink" id="p-save">Přidat do mapy</button>
+              <button type="button" class="btn btn-quiet" id="p-cancel" hidden>Zrušit úpravy</button>
+              <button type="button" class="btn btn-danger" id="p-delete" hidden>Odebrat z mapy</button>
+            </div>
+          </form>
+        </div>
+        <ul class="map-legend" id="map-legend"></ul>
+      </section>
+
+      <section class="block wrap" aria-labelledby="prio-title">
+        <header class="block-head">
+          <h2 id="prio-title">Moje priority</h2>
+          <p class="block-sub">Seřaď hodnoty od nejdůležitější. Pořadí se může lišit podle typu vztahu, proto si ho můžeš udělat pro každý typ zvlášť.</p>
+        </header>
+        <label class="inline-select">Pořadí pro <select id="prio-context"></select></label>
+        <ol class="prio-list" id="prio-list"></ol>
+      </section>
+
+      <section class="block wrap" aria-labelledby="mine-pairs-title">
+        <header class="block-head">
+          <h2 id="mine-pairs-title">Můj rub a líc</h2>
+          <p class="block-sub">Vyber si jeden vztah. Co ti dává a čím tě tentýž vztah stojí? Piš konkrétně, bez jmen. Dvojici můžeš anonymně poslat do společného přehledu.</p>
+        </header>
+        <div id="mine-pairs"></div>
+        <button type="button" class="btn btn-quiet" id="add-pair">Přidat dvojici</button>
+      </section>
+
+      <section class="block wrap" aria-labelledby="reflect-title">
+        <header class="block-head">
+          <h2 id="reflect-title">Moje reflexe</h2>
+        </header>
+        <div class="reflect" id="reflect"></div>
+      </section>
+
+      <section class="block wrap export" aria-labelledby="export-title">
+        <header class="block-head">
+          <h2 id="export-title">Uložit a stáhnout</h2>
+          <p class="block-sub">PDF vytvoříš v tiskovém okně volbou „Uložit jako PDF“. Záloha je soubor, ze kterého si mapu obnovíš v jiném prohlížeči.</p>
+        </header>
+        <div class="form-actions">
+          <button type="button" class="btn btn-ink" id="btn-pdf">Stáhnout moje PDF</button>
+          <button type="button" class="btn btn-quiet" id="btn-backup">Uložit zálohu</button>
+          <label class="btn btn-quiet file-btn">Načíst zálohu<input type="file" id="btn-restore" accept="application/json"></label>
+          <button type="button" class="btn btn-danger" id="btn-wipe">Smazat moje data</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="foot wrap">
+    <p id="foot-text"></p>
+  </footer>
+
+  <dialog id="submit-dialog" aria-labelledby="submit-title">
+    <form method="dialog" id="submit-form" class="submit-form">
+      <h2 id="submit-title">Přidat do přehledu</h2>
+      <p class="muted" id="submit-hint"></p>
+      <div id="submit-fields"></div>
+      <fieldset>
+        <legend>Kterých vztahů se to týká? <span class="muted">(nic = všech)</span></legend>
+        <div class="chip-pick" id="submit-types"></div>
+      </fieldset>
+      <label>Moje třída
+        <select id="submit-class" required></select>
+      </label>
+      <p class="form-msg" id="submit-msg" role="status"></p>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-ink" id="submit-send" value="send">Odeslat ke schválení</button>
+        <button type="button" class="btn btn-quiet" id="submit-close">Zavřít</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="print-root" aria-hidden="true"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

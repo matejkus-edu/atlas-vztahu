@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Správa atlasu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin">
+  <header class="adm-top wrap">
+    <h1>Správa atlasu</h1>
+    <a href="./" class="btn btn-quiet">Zpět na web</a>
+  </header>
+
+  <section class="wrap" id="login">
+    <form id="login-form" class="panel adm-login">
+      <label>Heslo pro správu
+        <input type="password" id="key" autocomplete="current-password" required>
+      </label>
+      <p class="muted" id="login-hint"></p>
+      <button class="btn btn-ink" type="submit">Přihlásit</button>
+      <p class="form-msg err" id="login-msg" role="alert"></p>
+    </form>
+  </section>
+
+  <main class="wrap" id="app" hidden>
+    <nav class="adm-tabs" role="tablist" aria-label="Správa">
+      <button role="tab" data-tab="pending" aria-selected="true">Ke schválení <span id="pending-count"></span></button>
+      <button role="tab" data-tab="items" aria-selected="false">Všechny položky</button>
+      <button role="tab" data-tab="add" aria-selected="false">Přidat z hodiny</button>
+      <button role="tab" data-tab="types" aria-selected="false">Typy vztahů</button>
+      <button role="tab" data-tab="sections" aria-selected="false">Oddíly</button>
+    </nav>
+
+    <section data-panel="pending">
+      <div class="adm-toolbar">
+        <button class="btn btn-ink" id="approve-sel">Schválit vybrané</button>
+        <button class="btn btn-quiet" id="hide-sel-p">Skrýt vybrané</button>
+        <button class="btn btn-danger" id="delete-sel-p">Smazat vybrané</button>
+      </div>
+      <div id="pending-list"></div>
+    </section>
+
+    <section data-panel="items" hidden>
+      <div class="adm-toolbar">
+        <label>Oddíl <select id="f-section"></select></label>
+        <label>Stav <select id="f-status">
+          <option value="">všechny</option><option value="approved">zveřejněné</option>
+          <option value="pending">čekající</option><option value="hidden">skryté</option>
+        </select></label>
+        <label>Hledat <input id="f-q" type="search"></label>
+      </div>
+      <div class="adm-toolbar">
+        <button class="btn btn-quiet" id="merge-sel">Sloučit vybrané</button>
+        <button class="btn btn-quiet" id="hide-sel">Skrýt vybrané</button>
+        <button class="btn btn-danger" id="delete-sel">Smazat vybrané</button>
+        <span class="muted">Sloučení: hlasy se sečtou, typy a třídy spojí. Zůstane text první vybrané položky.</span>
+      </div>
+      <div id="items-list"></div>
+    </section>
+
+    <section data-panel="add" hidden>
+      <p class="muted">Sem zapiš, na čem se třída shodla na tabuli. Váha = kolikrát to zaznělo (velikost kruhu nebo výška pilíře).</p>
+      <form id="add-form" class="panel adm-form"></form>
+    </section>
+
+    <section data-panel="types" hidden>
+      <p class="muted">Rozpětí na osách: −1 je levý pól, +1 pravý. Typ může zabírat širší rozpětí (např. rodina: sourozenci jsou symetričtí, rodiče asymetričtí).</p>
+      <div id="types-list"></div>
+      <button class="btn btn-quiet btn-add" id="type-new">Přidat typ</button>
+    </section>
+
+    <section data-panel="sections" hidden>
+      <p class="muted">Druh „bubliny“ = kruhy podle hlasů, „pilíře“ = sloupy, „dvojice“ = rub a líc. Zavřený oddíl je vidět, ale žáci do něj nepřispívají.</p>
+      <div id="sections-list"></div>
+      <button class="btn btn-quiet btn-add" id="section-new">Přidat oddíl</button>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>

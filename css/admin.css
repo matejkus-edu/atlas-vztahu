@@ -1,0 +1,32 @@
+.admin { font-size: 16px; }
+.adm-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 28px 18px; }
+.adm-top h1 { margin: 0; font-size: clamp(34px, 5vw, 52px); font-weight: 800; font-variation-settings: "wdth" 75; line-height: 1; }
+.adm-login { max-width: 420px; display: grid; gap: 14px; }
+.adm-tabs { display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 1.5px solid var(--line); margin-bottom: 20px; }
+.adm-tabs button { font: inherit; font-weight: 600; border: 0; background: none; color: var(--ink-2); padding: 10px 12px; border-bottom: 3px solid transparent; margin-bottom: -1.5px; cursor: pointer; }
+.adm-tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+#pending-count:not(:empty) { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: #FF48B0; color: #fff; font-size: 13px; margin-left: 4px; }
+.adm-toolbar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end; margin-bottom: 14px; }
+.adm-toolbar label { font-size: 14px; }
+
+.row-item { display: grid; grid-template-columns: 28px 1fr; gap: 10px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.row-item input[type="checkbox"] { width: 20px; height: 20px; margin-top: 4px; }
+.row-item .meta { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 13px; color: var(--ink-2); margin-top: 4px; }
+.row-item .txt { font-weight: 600; }
+.row-item .txt2 { margin-top: 2px; }
+.row-item .txt2::before { content: "↳ "; color: var(--ink-2); }
+.status { font-weight: 600; }
+.status.pending { color: #B5006E; }
+.status.hidden { color: var(--ink-2); }
+.status.approved { color: var(--ok); }
+.row-item details { margin-top: 8px; }
+.row-item summary { cursor: pointer; font-size: 14px; color: var(--ink-2); }
+.adm-form { display: grid; gap: 14px; max-width: 760px; }
+.adm-form .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.adm-form .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 640px) { .adm-form .two, .adm-form .three { grid-template-columns: 1fr; } }
+.checks { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.checks label { display: inline-flex; align-items: center; gap: 6px; font-weight: 400; }
+.type-edit, .section-edit { margin-bottom: 16px; }
+.axis-edit { display: grid; grid-template-columns: 1fr 90px 90px; gap: 8px; align-items: center; font-size: 14px; }
+.axis-edit input { width: 100%; }
