@@ -106,9 +106,9 @@ function itemForm(i = {}) {
   secSel.value = i.section || sec?.id || "";
   const isPairs = () => db.sections.find((s) => s.id === secSel.value)?.kind === "pairs";
   const pairBox = h("div", { class: "two" },
-    h("label", {}, "Čím vztah stojí (rub)", h("textarea", { name: "text2", rows: 2 }, i.text2 || "")),
+    h("label", {}, "Co vztah stojí (rub)", h("textarea", { name: "text2", rows: 2 }, i.text2 || "")),
     h("label", {}, "Souvislost", (() => {
-      const m = h("select", { name: "mark" }, h("option", { value: "pair" }, "⟷ druhá strana daru"), h("option", { value: "cross" }, "✕ nesouvisí"));
+      const m = h("select", { name: "mark" }, h("option", { value: "pair" }, "⟷ dvě strany jedné mince"), h("option", { value: "cross" }, "✕ spolu nesouvisí"));
       m.value = i.mark || "pair";
       return m;
     })()),

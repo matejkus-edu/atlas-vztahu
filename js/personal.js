@@ -18,8 +18,15 @@ function blank() {
     prio: { general: VALUES.map((v) => v.id) },
     pairs: [{ id: uid(), type: "", gift: "", cost: "", mark: "", sent: false }],
     reflect: { strong: "", grow: "", act: "" },
+    customSymbols: [],
+    customValues: [],
   };
 }
+
+// značky pro vlastní položky v mapě
+const GLYPHS = ["◆", "●", "▲", "✿", "☀", "♫", "☕", "✎", "♣", "☂", "✈", "⚽"];
+const allSymbols = () => [...SYMBOLS, ...me.customSymbols];
+const allValues = () => [...VALUES, ...me.customValues];
 
 function load() {
   const d = ls.get(KEY, null);
@@ -30,6 +37,8 @@ function load() {
     prio: { ...b.prio, ...(d.prio || {}) },
     reflect: { ...b.reflect, ...(d.reflect || {}) },
     people: Array.isArray(d.people) ? d.people : [],
+    customSymbols: Array.isArray(d.customSymbols) ? d.customSymbols : [],
+    customValues: Array.isArray(d.customValues) ? d.customValues : [],
     pairs: Array.isArray(d.pairs) && d.pairs.length ? d.pairs : b.pairs,
   };
 }
@@ -77,13 +86,11 @@ function initMapForm() {
   type.append(h("option", { value: "" }, "Neurčeno"));
   ctx.types.forEach((t) => type.append(h("option", { value: t.id }, t.name)));
   const symHost = $("p-symbols");
-  symHost.innerHTML = "";
-  SYMBOLS.forEach((sy) => symHost.append(h("button", {
-    type: "button", class: "sym-toggle", "data-sym": sy.id, "aria-pressed": "false",
-    onclick: (e) => e.currentTarget.setAttribute("aria-pressed", String(e.currentTarget.getAttribute("aria-pressed") !== "true")),
-  }, h("b", { "aria-hidden": "true" }, sy.s), sy.label)));
+  renderSymbolToggles([]);
+  $("sym-new-btn").onclick = addCustomSymbol;
+  $("sym-new-label").onkeydown = (e) => { if (e.key === "Enter") { e.preventDefault(); addCustomSymbol(); } };
 
-  $("map-form").addEventListener("submit", (e) => {
+  $("map-form").onsubmit = (e) => {
     e.preventDefault();
     const label = $("p-label").value.trim().slice(0, 4);
     if (!label) return;
@@ -99,16 +106,60 @@ function initMapForm() {
     resetMapForm();
     renderMap();
     $("p-label").focus();
-  });
+  };
   $("p-cancel").onclick = () => { resetMapForm(); renderMap(); };
   $("p-delete").onclick = () => {
     me.people = me.people.filter((p) => p.id !== editingId);
     save(); resetMapForm(); renderMap();
   };
 
+  renderLegend();
+}
+
+function renderLegend() {
   const leg = $("map-legend");
   leg.innerHTML = "";
-  SYMBOLS.forEach((sy) => leg.append(h("li", {}, h("b", {}, sy.s), sy.label)));
+  allSymbols().forEach((sy) => leg.append(h("li", {}, h("b", {}, sy.s), sy.label)));
+}
+
+function renderSymbolToggles(pressed) {
+  const symHost = $("p-symbols");
+  symHost.innerHTML = "";
+  const toggle = (sy) => h("button", {
+    type: "button", class: "sym-toggle", "data-sym": sy.id, "aria-pressed": String(pressed.includes(sy.id)),
+    onclick: (e) => e.currentTarget.setAttribute("aria-pressed", String(e.currentTarget.getAttribute("aria-pressed") !== "true")),
+  }, h("b", { "aria-hidden": "true" }, sy.s), sy.label);
+  SYMBOLS.forEach((sy) => symHost.append(toggle(sy)));
+  me.customSymbols.forEach((sy) => symHost.append(h("span", { class: "sym-item" }, toggle(sy),
+    h("button", { type: "button", class: "sym-del", "aria-label": "Odebrat vlastní položku " + sy.label, title: "Odebrat", onclick: () => removeCustomSymbol(sy.id) }, "×"))));
+  const used = me.customSymbols.map((x) => x.s);
+  const glyph = $("sym-new-glyph");
+  glyph.innerHTML = "";
+  GLYPHS.filter((g) => !used.includes(g)).forEach((g) => glyph.append(h("option", { value: g }, g)));
+}
+
+const pressedSymbols = () => [...document.querySelectorAll("#p-symbols .sym-toggle[aria-pressed='true']")].map((b) => b.dataset.sym);
+
+function addCustomSymbol() {
+  const label = $("sym-new-label").value.trim();
+  if (!label) { toast("Napiš, co ti vztah dává."); $("sym-new-label").focus(); return; }
+  const sy = { id: "c-" + uid(), s: $("sym-new-glyph").value || "◆", label };
+  me.customSymbols.push(sy);
+  save();
+  renderSymbolToggles([...pressedSymbols(), sy.id]);
+  renderLegend();
+  $("sym-new-label").value = "";
+  toast("Přidáno: " + sy.s + " " + label);
+}
+
+function removeCustomSymbol(id) {
+  const pressed = pressedSymbols().filter((x) => x !== id);
+  me.customSymbols = me.customSymbols.filter((x) => x.id !== id);
+  me.people.forEach((p) => (p.symbols = p.symbols.filter((x) => x !== id)));
+  save();
+  renderSymbolToggles(pressed);
+  renderLegend();
+  renderMap();
 }
 
 function resetMapForm() {
@@ -161,7 +212,7 @@ export function buildMapSvg(svg, interactive) {
       const rad = ringMid(r.id) + (n > cap ? (k % 2 ? 11 : -11) : 0);
       const x = C + Math.cos(ang) * rad, y = C + Math.sin(ang) * rad;
       const t = typeById(p.type);
-      const syms = p.symbols.map((id) => SYMBOLS.find((sy) => sy.id === id)?.s).join("");
+      const syms = p.symbols.map((id) => allSymbols().find((sy) => sy.id === id)?.s).filter(Boolean).join("");
       const g = s("g", { class: "person" + (p.id === editingId ? " sel" : "") });
       g.append(
         s("circle", { class: "node blend", cx: x, cy: y, r: 18, fill: t ? t.color : "#8A8FAD" }),
@@ -190,13 +241,32 @@ function initPrio() {
   ctxSel.append(h("option", { value: "general" }, "vztahy obecně"));
   ctx.types.forEach((t) => ctxSel.append(h("option", { value: t.id }, t.name.toLowerCase())));
   ctxSel.onchange = renderPrio;
+  $("prio-add").onsubmit = (e) => {
+    e.preventDefault();
+    const name = $("prio-new").value.trim();
+    if (!name) return;
+    const v = { id: "cv-" + uid(), name };
+    me.customValues.push(v);
+    // nová hodnota se zařadí na konec všech pořadí
+    Object.keys(me.prio).forEach((k) => me.prio[k].push(v.id));
+    save(); renderPrio();
+    $("prio-new").value = "";
+    toast("Přidáno: " + name);
+  };
   renderPrio();
 }
 
+function removeValue(id) {
+  me.customValues = me.customValues.filter((v) => v.id !== id);
+  Object.keys(me.prio).forEach((k) => (me.prio[k] = me.prio[k].filter((x) => x !== id)));
+  save(); renderPrio();
+}
+
 function orderFor(key) {
-  const base = me.prio[key] || me.prio.general || VALUES.map((v) => v.id);
-  const known = base.filter((id) => VALUES.some((v) => v.id === id));
-  return [...known, ...VALUES.map((v) => v.id).filter((id) => !known.includes(id))];
+  const all = allValues();
+  const base = me.prio[key] || me.prio.general || all.map((v) => v.id);
+  const known = base.filter((id) => all.some((v) => v.id === id));
+  return [...known, ...all.map((v) => v.id).filter((id) => !known.includes(id))];
 }
 
 function renderPrio() {
@@ -205,10 +275,13 @@ function renderPrio() {
   list.innerHTML = "";
   const order = orderFor(key);
   order.forEach((id, idx) => {
-    const v = VALUES.find((x) => x.id === id);
+    const v = allValues().find((x) => x.id === id);
+    const own = id.startsWith("cv-");
     list.append(h("li", { "data-id": id },
-      h("div", {}, h("div", { class: "v-name" }, v.name, " ", h("span", { class: "en" }, "(" + v.en + ")")), v.hint ? h("div", { class: "v-hint" }, v.hint) : null),
+      h("div", {}, h("div", { class: "v-name" }, v.name, " ", v.en ? h("span", { class: "en" }, "(" + v.en + ")") : null),
+        v.hint ? h("div", { class: "v-hint" }, v.hint) : null, own ? h("div", { class: "v-own" }, "vlastní") : null),
       h("div", { class: "moves" },
+        own ? h("button", { type: "button", class: "val-del", "aria-label": "Odebrat hodnotu " + v.name, title: "Odebrat", onclick: () => removeValue(id) }, "×") : null,
         h("button", { type: "button", "aria-label": "Posunout " + v.name + " výš", disabled: idx === 0, onclick: () => move(key, id, -1) }, "↑"),
         h("button", { type: "button", "aria-label": "Posunout " + v.name + " níž", disabled: idx === order.length - 1, onclick: () => move(key, id, 1) }, "↓"),
       ),
@@ -217,7 +290,7 @@ function renderPrio() {
   if (sortable) sortable.destroy();
   if (window.Sortable) {
     sortable = window.Sortable.create(list, {
-      animation: 160, filter: "button", preventOnFilter: false, delay: 120, delayOnTouchOnly: true,
+      animation: 160, filter: "button, .val-del", preventOnFilter: false, delay: 120, delayOnTouchOnly: true,
       onEnd: () => {
         me.prio[key] = [...list.children].map((li) => li.dataset.id);
         save(); renderPrio();
@@ -253,9 +326,9 @@ function renderPairs() {
     host.append(h("div", { class: "mine-pair" },
       h("label", { class: "full" }, "Vztah", typeSel),
       h("label", {}, "Co mi dává", h("textarea", { rows: 2, maxlength: 200, oninput: upd("gift") }, p.gift)),
-      h("label", {}, "Čím mě tentýž vztah stojí", h("textarea", { rows: 2, maxlength: 200, oninput: upd("cost") }, p.cost)),
+      h("label", {}, "Co mě tentýž vztah stojí", h("textarea", { rows: 2, maxlength: 200, oninput: upd("cost") }, p.cost)),
       h("fieldset", { class: "full" }, h("legend", {}, "Souvislost"),
-        h("div", { class: "marks" }, radio("pair", "⟷ druhá strana téhož daru"), radio("cross", "✕ s darem nesouvisí"))),
+        h("div", { class: "marks" }, radio("pair", "⟷ Bez jednoho by nebylo druhé, jsou to dvě strany jedné mince"), radio("cross", "✕ Nesouvisí spolu: kdyby pravá strana zmizela, vztah by byl stejný nebo lepší"))),
       h("div", { class: "row-actions" },
         ctx.pairsSection?.open ? send : null,
         p.sent ? h("span", { class: "sent" }, "Odesláno ke schválení") : null,
@@ -344,20 +417,20 @@ function printPdf() {
       h("div", { class: "pr-legend" },
         RINGS.map((r) => h("div", {}, h("b", {}, r.name + ": "), me.people.filter((p) => p.ring === r.id).length || "–")),
         h("div", {}, " "),
-        SYMBOLS.map((sy) => h("div", {}, h("b", {}, sy.s + " "), sy.label)),
+        allSymbols().map((sy) => h("div", {}, h("b", {}, sy.s + " "), sy.label)),
       )));
 
   const prioKeys = Object.keys(me.prio);
   const prioSec = h("section", { class: "pr-section" }, h("h2", {}, "Co je pro mě ve vztazích důležité"),
     prioKeys.map((k) => [
       prioKeys.length > 1 ? h("p", { style: { margin: "2mm 0 1mm", fontWeight: 600 } }, k === "general" ? "Vztahy obecně" : typeById(k)?.name || k) : null,
-      h("ol", { class: "pr-prio" }, orderFor(k).map((id) => h("li", {}, VALUES.find((v) => v.id === id).name))),
+      h("ol", { class: "pr-prio" }, orderFor(k).map((id) => h("li", {}, allValues().find((v) => v.id === id).name))),
     ]));
 
   const filled = me.pairs.filter((p) => p.gift.trim() || p.cost.trim());
   const pairsSec = filled.length ? h("section", { class: "pr-section" }, h("h2", {}, "Můj rub a líc"),
     h("table", { class: "pr-pairs" },
-      h("thead", {}, h("tr", {}, h("th", {}, "Vztah"), h("th", {}, "Co mi dává"), h("th", {}, "Čím mě stojí"), h("th", {}, ""))),
+      h("thead", {}, h("tr", {}, h("th", {}, "Vztah"), h("th", {}, "Co mi dává"), h("th", {}, "Co mě stojí"), h("th", {}, ""))),
       h("tbody", {}, filled.map((p) => h("tr", {}, h("td", {}, typeById(p.type)?.name || "–"), h("td", {}, p.gift), h("td", {}, p.cost), h("td", {}, p.mark === "cross" ? "✕" : p.mark === "pair" ? "⟷" : "")))),
     )) : null;
 

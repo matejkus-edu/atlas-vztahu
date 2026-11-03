@@ -25,7 +25,7 @@ export const DEFAULT_TYPES = [
   },
   {
     id: "komunita", name: "Komunita a sousedé", en: "community", color: "#00A95C", order: 5,
-    description: "Sousedé, oddíl, kroužek, parta z hřiště. Vztahy, které nás drží v nějakém místě.",
+    description: "Sousedé, oddíl, kroužek, sportovní klub. Vztahy spojené s místem nebo s aktivitami.",
     closeness: [0.3, 0.9], symmetry: [-0.6, 0.2], formality: [-0.2, 0.5], choice: [0.1, 0.7],
   },
   {
@@ -64,7 +64,7 @@ export const DEFAULT_SECTIONS = [
   {
     id: "ambivalence", order: 5, kind: "pairs", open: true, visible: true,
     title: "Rub a líc", en: "ambivalence",
-    subtitle: "Co nám vztah dává a čím nás tentýž vztah stojí. ⟷ znamená druhou stranu téhož daru, ✕ něco, co vztah nepotřebuje.",
+    subtitle: "Co nám vztah dává a co nás tentýž vztah stojí. ⟷ znamená, že jde o dvě strany jedné mince, ✕ že spolu nesouvisí.",
   },
 ];
 

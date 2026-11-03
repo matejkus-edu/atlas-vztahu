@@ -98,7 +98,7 @@ function submit_(raw) {
   if (!item.classes.length) throw new Error('Vyber svou třídu.');
   var section = readSections_().filter(function (s) { return s.id === item.section; })[0];
   if (!section || !section.open || !section.visible) throw new Error('Do tohoto oddílu teď nejde přispívat.');
-  if (section.kind === 'pairs' && !item.text2) throw new Error('Doplň i druhou stranu (čím tě vztah stojí).');
+  if (section.kind === 'pairs' && !item.text2) throw new Error('Doplň i druhou stranu (co tě vztah stojí).');
   item.id = 'i' + Utilities.getUuid().slice(0, 8);
   item.weight = 1;
   item.status = 'pending';
@@ -326,7 +326,7 @@ var DEFAULT_TYPES = [
     description: 'Spolužáci, učitelé, kolegové, šéf na brigádě. Vztahy, které vymezuje role.',
     closeness: [-0.2, 0.8], symmetry: [-0.6, 0.9], formality: [0, 0.9], choice: [0.2, 0.9] },
   { id: 'komunita', name: 'Komunita a sousedé', en: 'community', color: '#00A95C', order: 5,
-    description: 'Sousedé, oddíl, kroužek, parta z hřiště. Vztahy, které nás drží v nějakém místě.',
+    description: 'Sousedé, oddíl, kroužek, sportovní klub. Vztahy spojené s místem nebo s aktivitami.',
     closeness: [0.3, 0.9], symmetry: [-0.6, 0.2], formality: [-0.2, 0.5], choice: [0.1, 0.7] },
   { id: 'sluzby', name: 'Instituce a služby', en: 'services', color: '#00838A', order: 6,
     description: 'Lékař, prodavačka, řidič autobusu. Krátké, formální, ale každodenní setkání.',
@@ -351,5 +351,5 @@ var DEFAULT_SECTIONS = [
     subtitle: 'Pilíře dobrého vztahu. Výška sloupu odpovídá tomu, kolikrát se na něm třídy shodly.' },
   { id: 'ambivalence', order: 5, kind: 'pairs', open: true, visible: true,
     title: 'Rub a líc', en: 'ambivalence',
-    subtitle: 'Co nám vztah dává a čím nás tentýž vztah stojí. ⟷ znamená druhou stranu téhož daru, ✕ něco, co vztah nepotřebuje.' },
+    subtitle: 'Co nám vztah dává a co nás tentýž vztah stojí. ⟷ znamená, že jde o dvě strany jedné mince, ✕ že spolu nesouvisí.' },
 ];

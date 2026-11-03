@@ -48,7 +48,7 @@
 
       <section class="block wrap" id="atlas" aria-labelledby="atlas-title">
         <header class="block-head">
-          <h2 id="atlas-title">Typy vztahů <span class="en">(types of relationships)</span></h2>
+          <h2 id="atlas-title">Typy vztahů</h2>
           <p class="block-sub">Každý typ vztahu leží někde mezi dvěma póly. Vyber osy a podívej se, kde se jednotlivé typy potkávají. Klepnutím na typ vyfiltruješ celý přehled.</p>
         </header>
         <div class="atlas-controls">
@@ -67,7 +67,7 @@
     <main id="personal" role="tabpanel" aria-labelledby="tab-personal" hidden>
       <div class="wrap personal-intro">
         <h2>Moje vztahy</h2>
-        <p>Tahle část se ukládá jen v tomto prohlížeči. Nikdo jiný ji nevidí, dokud ji sám nebo sama neodešleš nebo nestáhneš jako PDF.</p>
+        <p>Tahle část se ukládá jen v tomto prohlížeči a nikam se sama neodesílá. Do společného přehledu se dostane jen dvojice, kterou anonymně odešleš tlačítkem v části Můj rub a líc. PDF si stahuješ jen pro sebe.</p>
         <div class="me-fields">
           <label>Jméno do PDF <span class="muted">(nepovinné, nikam se neodesílá)</span>
             <input id="me-name" type="text" maxlength="60" autocomplete="off">
@@ -101,6 +101,13 @@
             <fieldset class="symbols">
               <legend>Co mi vztah dává</legend>
               <div id="p-symbols"></div>
+              <div class="custom-add" id="sym-add">
+                <label class="visually-hidden" for="sym-new-label">Vlastní položka</label>
+                <input id="sym-new-label" type="text" maxlength="40" placeholder="Vlastní, např. Hrajeme spolu hudbu">
+                <label class="visually-hidden" for="sym-new-glyph">Značka</label>
+                <select id="sym-new-glyph"></select>
+                <button type="button" class="btn btn-quiet btn-add" id="sym-new-btn">Přidat</button>
+              </div>
             </fieldset>
             <div class="form-actions">
               <button type="submit" class="btn btn-ink" id="p-save">Přidat do mapy</button>
@@ -119,12 +126,17 @@
         </header>
         <label class="inline-select">Pořadí pro <select id="prio-context"></select></label>
         <ol class="prio-list" id="prio-list"></ol>
+        <form class="custom-add prio-add" id="prio-add" autocomplete="off">
+          <label class="visually-hidden" for="prio-new">Vlastní hodnota</label>
+          <input id="prio-new" type="text" maxlength="50" placeholder="Vlastní hodnota, např. Humor">
+          <button type="submit" class="btn btn-quiet btn-add">Přidat hodnotu</button>
+        </form>
       </section>
 
       <section class="block wrap" aria-labelledby="mine-pairs-title">
         <header class="block-head">
           <h2 id="mine-pairs-title">Můj rub a líc</h2>
-          <p class="block-sub">Vyber si jeden vztah. Co ti dává a čím tě tentýž vztah stojí? Piš konkrétně, bez jmen. Dvojici můžeš anonymně poslat do společného přehledu.</p>
+          <p class="block-sub">Vyber si jeden vztah. Co ti dává a co tě tentýž vztah stojí? Piš konkrétně, bez jmen. Dvojici můžeš anonymně poslat do společného přehledu.</p>
         </header>
         <div id="mine-pairs"></div>
         <button type="button" class="btn btn-quiet" id="add-pair">Přidat dvojici</button>

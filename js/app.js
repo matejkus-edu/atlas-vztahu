@@ -201,7 +201,7 @@ function renderAtlas() {
     prof.append(h("button", {
       class: "profile", type: "button", "--c": t.color, "data-type": t.id, "aria-pressed": String(state.filterType === t.id),
       onclick: () => setType(state.filterType === t.id ? null : t.id),
-    }, h("h3", {}, t.name, " ", h("span", { class: "en" }, "(" + t.en + ")")), h("p", {}, t.description || ""), h("div", { class: "axis-mini" }, rows)));
+    }, h("h3", {}, h("span", {}, t.name, " ", h("span", { class: "en" }, "(" + t.en + ")"))), h("p", {}, t.description || ""), h("div", { class: "axis-mini" }, rows)));
   });
   updateAtlasDim();
 }
@@ -260,7 +260,7 @@ function renderSections() {
   state.sections.forEach((sec) => {
     const items = visibleItems(sec.id);
     const head = h("header", { class: "block-head" },
-      h("h2", { id: "h-" + sec.id }, sec.title, sec.en ? [" ", h("span", { class: "en" }, "(" + sec.en + ")")] : null),
+      h("h2", { id: "h-" + sec.id }, sec.title, sec.kind === "pairs" && sec.en ? [" ", h("span", { class: "en" }, "(" + sec.en + ")")] : null),
       sec.subtitle ? h("p", { class: "block-sub" }, sec.subtitle) : null,
       sec.open ? h("div", { class: "block-actions" },
         h("button", { class: "btn btn-quiet btn-add", type: "button", onclick: () => openSubmit(sec) }, sec.kind === "pairs" ? "Přidat svou dvojici" : "Přidat do přehledu"),
@@ -364,7 +364,7 @@ function renderPairs(items) {
   const frag = h("div", {});
   const bar = h("div", { class: "pairs-toolbar" },
     h("div", { class: "seg", role: "group", "aria-label": "Zobrazit dvojice" },
-      [["all", "Všechny"], ["pair", "⟷ druhá strana daru"], ["cross", "✕ nepatří k vztahu"]].map(([v, l]) =>
+      [["all", "Všechny"], ["pair", "⟷ dvě strany jedné mince"], ["cross", "✕ spolu nesouvisí"]].map(([v, l]) =>
         h("button", { type: "button", "aria-pressed": String(state.pairMark === v), onclick: () => { state.pairMark = v; renderSections(); } }, l)),
     ),
   );
@@ -379,7 +379,7 @@ function renderPairs(items) {
     frag.append(h("div", { class: "coins" }, general.map((i) =>
       h("div", { class: "coin" + (matches(i) ? "" : " dim"), "--c": colorOf(i) },
         h("div", { class: "side gift" }, i.text),
-        h("div", { class: "hinge", "aria-label": i.mark === "cross" ? "nesouvisí" : "druhá strana téhož" }, h("span", {}, i.mark === "cross" ? "✕" : "⟷")),
+        h("div", { class: "hinge", "aria-label": i.mark === "cross" ? "spolu nesouvisí" : "dvě strany jedné mince" }, h("span", {}, i.mark === "cross" ? "✕" : "⟷")),
         h("div", { class: "side cost" }, i.text2),
       ))));
   }
@@ -389,7 +389,7 @@ function renderPairs(items) {
       h("article", { class: "card" + (matches(i) ? "" : " dim"), "--c": colorOf(i) },
         h("div", { class: "gift" }, i.text),
         h("div", { class: "cost" },
-          h("span", { class: "mark" + (i.mark === "cross" ? " cross" : ""), title: i.mark === "cross" ? "nepatří k vztahu" : "druhá strana téhož daru" }, i.mark === "cross" ? "✕" : "⟷"),
+          h("span", { class: "mark" + (i.mark === "cross" ? " cross" : ""), title: i.mark === "cross" ? "spolu nesouvisí" : "dvě strany jedné mince" }, i.mark === "cross" ? "✕" : "⟷"),
           i.text2),
         h("div", { class: "meta" },
           (i.types || []).map((t) => typeById(t)).filter(Boolean).map((t) => h("span", {}, h("span", { class: "dot", "--c": t.color }), t.name)),
@@ -473,11 +473,11 @@ function openSubmit(sec) {
   if (sec.kind === "pairs") {
     fields.append(
       h("label", {}, "Co mi ten vztah dává", h("textarea", { name: "text", maxlength: 200, required: true, rows: 2, placeholder: "Např. Mamka pozná, že mi není dobře, i když nic neřeknu." })),
-      h("label", {}, "Čím mě tentýž vztah stojí", h("textarea", { name: "text2", maxlength: 200, required: true, rows: 2, placeholder: "Např. Před ní nic neschovám, ani když bych chtěl/a." })),
+      h("label", {}, "Co mě tentýž vztah stojí", h("textarea", { name: "text2", maxlength: 200, required: true, rows: 2, placeholder: "Např. Před ní nic neschovám, ani když bych chtěl/a." })),
       h("fieldset", {}, h("legend", {}, "Jak spolu ty dvě strany souvisí?"),
         h("div", { class: "marks" },
-          h("label", {}, h("input", { type: "radio", name: "mark", value: "pair", required: true }), h("span", {}, h("b", {}, "⟷ "), "Druhá strana téhož daru: bez ní by zmizelo i to dobré")),
-          h("label", {}, h("input", { type: "radio", name: "mark", value: "cross" }), h("span", {}, h("b", {}, "✕ "), "S darem nesouvisí: vztah by bez toho fungoval stejně nebo líp")),
+          h("label", {}, h("input", { type: "radio", name: "mark", value: "pair", required: true }), h("span", {}, h("b", {}, "⟷ "), "Bez jednoho by nebylo druhé, jsou to dvě strany jedné mince")),
+          h("label", {}, h("input", { type: "radio", name: "mark", value: "cross" }), h("span", {}, h("b", {}, "✕ "), "Nesouvisí spolu: kdyby pravá strana zmizela, vztah by byl stejný nebo lepší")),
         )),
     );
   } else {
