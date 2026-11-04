@@ -1,8 +1,8 @@
 // Komunikace se sdílenými daty.
 // Ostrý režim: Google Apps Script (API_URL v config.js).
 // Demo režim: vše v localStorage tohoto prohlížeče.
-import { API_URL, CLASSES } from "./config.js?v=20261103j";
-import { DEFAULT_TYPES, DEFAULT_SECTIONS, DEMO_ITEMS } from "./seed.js?v=20261103j";
+import { API_URL, CLASSES } from "./config.js?v=20261104a";
+import { DEFAULT_TYPES, DEFAULT_SECTIONS, DEMO_ITEMS } from "./seed.js?v=20261104a";
 
 export const DEMO = !API_URL;
 

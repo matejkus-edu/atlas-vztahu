@@ -340,6 +340,7 @@ legend { font-size: 15px; font-weight: 550; padding: 0; margin-bottom: 6px; }
 .zoom-btn[disabled] { opacity: .4; cursor: default; }
 .zoom-reset { padding: 7px 12px; font-size: 14px; }
 .map-note { margin-left: auto; }
+.field-hint { font-size: 13px; font-weight: 400; color: var(--ink-2); margin-top: -3px; }
 label.check { display: flex; align-items: flex-start; gap: 8px; font-weight: 500; cursor: pointer; }
 label.check input { margin-top: 4px; width: 18px; height: 18px; }
 .map-form { display: grid; gap: 14px; }

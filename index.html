@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261103j">
+  <link rel="stylesheet" href="css/style.css?v=20261104a">
 </head>
 <body>
   <a class="skip" href="#content">Přeskočit na obsah</a>
@@ -61,7 +61,7 @@
     <main id="personal" role="tabpanel" aria-labelledby="tab-personal" hidden>
       <div class="wrap personal-intro">
         <h2>Moje vztahy</h2>
-        <p>Tahle část se ukládá jen v tomto prohlížeči a nikam se sama neodesílá. Do společného přehledu se dostane jen dvojice, kterou anonymně odešleš tlačítkem v části Můj rub a líc. PDF si stahuješ jen pro sebe.</p>
+        <p>Tahle část se ukládá jen v tomto prohlížeči a nikam se neodesílá. PDF si stahuješ jen pro sebe.</p>
         <div class="me-fields">
           <label>Jméno do PDF <span class="muted">(nepovinné, nikam se neodesílá)</span>
             <input id="me-name" type="text" maxlength="60" autocomplete="off">
@@ -75,7 +75,7 @@
       <section class="block wrap" aria-labelledby="map-title">
         <header class="block-head">
           <h2 id="map-title">Moje mapa vztahů</h2>
-          <p class="block-sub">Do kruhů zapiš lidi podle toho, jak blízký vztah s nimi máš: 1 je nejblíž, 4 nejdál. Ke každému si můžeš poznamenat, co ti vztah dává. Uvidíš to po klepnutí na jméno v mapě.</p>
+          <p class="block-sub">Do kruhů zapiš lidi podle toho, jak blízký vztah s nimi máš: 1 je nejblíž, 4 nejdál. Ke každému si můžeš poznamenat, co ti vztah dává a co tě stojí. Uvidíš to po klepnutí na jméno v mapě.</p>
         </header>
         <div class="map-layout">
           <div class="map-canvas">
@@ -87,7 +87,6 @@
               <span id="zoom-level" class="muted">100 %</span>
               <button type="button" class="zoom-btn" id="zoom-in" aria-label="Přiblížit">+</button>
               <button type="button" class="btn btn-quiet zoom-reset" id="zoom-reset">Celá mapa</button>
-              <span class="muted map-note">⚡ = vztah mě někdy stojí hodně energie</span>
             </div>
           </div>
           <form class="map-form panel" id="map-form" autocomplete="off">
@@ -104,9 +103,9 @@
             <label>Co mi tento vztah dává
               <textarea id="p-gives" rows="3" maxlength="400" placeholder="Napiš vlastními slovy, např. Můžu se jí se vším svěřit a vždycky mě rozesměje."></textarea>
             </label>
-            <label class="check">
-              <input type="checkbox" id="p-bolt">
-              <span>⚡ Tento vztah mě někdy stojí hodně energie</span>
+            <label>Co mě tento vztah stojí
+              <span class="field-hint">energie, času, starostí, konfliktů, sebeovládání, …</span>
+              <textarea id="p-costs" rows="3" maxlength="400" placeholder="Např. Často se kvůli maličkostem hádáme a musím se hodně krotit."></textarea>
             </label>
             <div class="form-actions">
               <button type="submit" class="btn btn-ink" id="p-save">Přidat do mapy</button>
@@ -129,15 +128,6 @@
           <input id="prio-new" type="text" maxlength="50" placeholder="Vlastní hodnota, např. Humor">
           <button type="submit" class="btn btn-quiet btn-add">Přidat hodnotu</button>
         </form>
-      </section>
-
-      <section class="block wrap" aria-labelledby="mine-pairs-title">
-        <header class="block-head">
-          <h2 id="mine-pairs-title">Můj rub a líc</h2>
-          <p class="block-sub">Vyber si jeden vztah. Co ti dává a co tě tentýž vztah stojí? Piš konkrétně, bez jmen. Dvojici můžeš anonymně poslat do společného přehledu.</p>
-        </header>
-        <div id="mine-pairs"></div>
-        <button type="button" class="btn btn-quiet" id="add-pair">Přidat dvojici</button>
       </section>
 
       <section class="block wrap" aria-labelledby="reflect-title">
@@ -190,6 +180,6 @@
   <div id="print-root" aria-hidden="true"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
-  <script type="module" src="js/app.js?v=20261103j"></script>
+  <script type="module" src="js/app.js?v=20261104a"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 // Osobní část: ukládá se jen do localStorage tohoto prohlížeče.
-import { CLASSES, VALUES, SYMBOLS, RINGS, SITE } from "./config.js?v=20261103j";
-import { ls, submitItem } from "./api.js?v=20261103j";
-import { h, s, toast } from "./ui.js?v=20261103j";
+import { CLASSES, VALUES, SYMBOLS, RINGS, SITE } from "./config.js?v=20261104a";
+import { ls, submitItem } from "./api.js?v=20261104a";
+import { h, s, toast } from "./ui.js?v=20261104a";
 
 const KEY = "atlas-me-v1";
 const $ = (id) => document.getElementById(id);
@@ -27,13 +27,15 @@ const allValues = () => [...VALUES, ...me.customValues];
 // Starší verze mapy měla u lidí značky (symbols). Převedeme je na blesk + text „co mi vztah dává“.
 function migratePerson(p, customSymbols) {
   const ring = Math.min(4, Math.max(1, Number(p.ring) || 1));
-  if (!Array.isArray(p.symbols)) return { ...p, ring, gives: p.gives || "", bolt: !!p.bolt };
+  // dřívější „blesk“ se převede na text v poli „co mě vztah stojí“
+  const costs = p.costs || (p.bolt || p.symbols?.includes?.("bolt") ? "hodně energie" : "");
+  if (!Array.isArray(p.symbols)) { const { bolt, ...rest } = p; return { ...rest, ring, gives: p.gives || "", costs }; }
   const labels = p.symbols
     .filter((id) => id !== "bolt")
     .map((id) => [...SYMBOLS, ...customSymbols].find((sy) => sy.id === id)?.label)
     .filter(Boolean);
   const { symbols, ...rest } = p;
-  return { ...rest, ring, bolt: symbols.includes("bolt"), gives: p.gives || labels.join(", ") };
+  return { ...rest, ring, costs, gives: p.gives || labels.join(", ") };
 }
 
 function load() {
@@ -70,12 +72,6 @@ export function initPersonal(context) {
   initMapForm();
   renderMap();
   initPrio();
-  renderPairs();
-  $("add-pair").onclick = () => {
-    me.pairs.push({ id: uid(), type: "", gift: "", cost: "", mark: "", sent: false });
-    save(); renderPairs();
-    document.querySelector("#mine-pairs .mine-pair:last-child textarea")?.focus();
-  };
   renderReflect();
   initExport();
 }
@@ -86,7 +82,7 @@ const ringOuter = (i) => R0 + i * STEP; // i = 1..4
 const ringMid = (i) => R0 + (i - 0.5) * STEP;
 const PILL_H = 32;
 const shortName = (s) => (s.length > 26 ? s.slice(0, 25) + "…" : s);
-const pillWidth = (label, bolt) => Math.min(230, Math.round(shortName(label).length * 9 + (bolt ? 24 : 0) + 26));
+const pillWidth = (label) => Math.min(230, Math.round(shortName(label).length * 9 + 26));
 
 function initMapForm() {
   const ring = $("p-ring");
@@ -106,7 +102,7 @@ function initMapForm() {
       ring: Number($("p-ring").value),
       type: $("p-type").value,
       gives: $("p-gives").value.trim().slice(0, 400),
-      bolt: $("p-bolt").checked,
+      costs: $("p-costs").value.trim().slice(0, 400),
     };
     if (editingId) Object.assign(me.people.find((p) => p.id === editingId), data);
     else me.people.push({ id: uid(), ...data });
@@ -139,7 +135,7 @@ function editPerson(p) {
   $("p-ring").value = String(p.ring);
   $("p-type").value = p.type || "";
   $("p-gives").value = p.gives || "";
-  $("p-bolt").checked = !!p.bolt;
+  $("p-costs").value = p.costs || "";
   $("map-form-title").textContent = p.label;
   $("p-save").textContent = "Uložit změny";
   $("p-cancel").hidden = false;
@@ -171,29 +167,28 @@ export function buildMapSvg(svg, interactive) {
     if (!n) return;
     // dole necháme mezeru pro číslo kruhu
     const gap = 0.6, start = Math.PI / 2 + gap / 2, span = Math.PI * 2 - gap;
-    const avgW = people.reduce((a, p) => a + pillWidth(p.label, p.bolt), 0) / n;
+    const avgW = people.reduce((a, p) => a + pillWidth(p.label), 0) / n;
     const crowded = n * avgW * 0.8 > 2 * Math.PI * ringMid(r.id);
     people.forEach((p, k) => {
       // sousední kruhy jsou vůči sobě pootočené, aby se jména nepřekrývala
       const phase = r.id % 2 ? 0.25 : 0.7;
       const ang = start + ((k + phase) / n) * span;
-      const w = pillWidth(p.label, p.bolt);
+      const w = pillWidth(p.label);
       // dlouhé jméno nesmí zasahovat do středu „JÁ“
       const minRad = R0 + 10 + (w / 2) * Math.abs(Math.cos(ang)) + (PILL_H / 2) * Math.abs(Math.sin(ang));
       const rad = Math.max(minRad, ringMid(r.id) + (crowded ? (k % 2 ? 17 : -17) : 0));
       const x = C + Math.cos(ang) * rad, y = C + Math.sin(ang) * rad;
       const t = typeById(p.type);
-      const g = s("g", { class: "person" + (p.id === editingId ? " sel" : "") });
+      const g = s("g", { class: "person" + (interactive && p.id === editingId ? " sel" : "") });
       g.append(
         s("rect", { class: "node blend", x: x - w / 2, y: y - PILL_H / 2, width: w, height: PILL_H, rx: PILL_H / 2, fill: t ? t.color : "#8A8FAD" }),
-        s("text", { x: x - (p.bolt ? 9 : 0), y: y + 5, "text-anchor": "middle", text: shortName(p.label) }),
+        s("text", { x, y: y + 5, "text-anchor": "middle", text: shortName(p.label) }),
       );
-      if (p.bolt) g.append(s("text", { class: "bolt", x: x + w / 2 - 15, y: y + 5, "text-anchor": "middle", text: "⚡" }));
       if (interactive) {
         g.setAttribute("tabindex", "0");
         g.setAttribute("role", "button");
-        g.setAttribute("aria-label", p.label + (p.gives ? ". Dává mi: " + p.gives : "") + ". Klepnutím otevřeš.");
-        g.append(s("title", { text: p.gives ? p.label + ": " + p.gives : p.label }));
+        g.setAttribute("aria-label", p.label + ". Klepnutím otevřeš, co ti vztah dává a co tě stojí.");
+        g.append(s("title", { text: p.label }));
         g.addEventListener("click", () => editPerson(p));
         g.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); editPerson(p); } });
       }
@@ -303,49 +298,6 @@ function move(key, id, dir) {
   document.querySelector(`#prio-list li[data-id="${id}"] button[aria-label*="${dir < 0 ? "výš" : "níž"}"]`)?.focus();
 }
 
-// ── rub a líc ───────────────────────────────────────────────
-function renderPairs() {
-  const host = $("mine-pairs");
-  host.innerHTML = "";
-  me.pairs.forEach((p) => {
-    const upd = (k) => (e) => { p[k] = e.target.value; if (p.sent) { p.sent = false; } save(); };
-    const typeSel = h("select", { onchange: upd("type") }, h("option", { value: "" }, "Vyber typ vztahu…"), ctx.types.map((t) => h("option", { value: t.id }, t.name)));
-    typeSel.value = p.type;
-    const radio = (val, label) => {
-      const inp = h("input", { type: "radio", name: "mk-" + p.id, value: val, onchange: upd("mark") });
-      inp.checked = p.mark === val;
-      return h("label", {}, inp, h("span", {}, label));
-    };
-    const send = h("button", { type: "button", class: "btn btn-ink", onclick: () => sendPair(p) }, "Odeslat anonymně do přehledu");
-    host.append(h("div", { class: "mine-pair" },
-      h("label", { class: "full" }, "Vztah", typeSel),
-      h("label", {}, "Co mi dává", h("textarea", { rows: 2, maxlength: 200, oninput: upd("gift") }, p.gift)),
-      h("label", {}, "Co mě tentýž vztah stojí", h("textarea", { rows: 2, maxlength: 200, oninput: upd("cost") }, p.cost)),
-      h("fieldset", { class: "full" }, h("legend", {}, "Souvislost"),
-        h("div", { class: "marks" }, radio("pair", "⟷ Bez jednoho by nebylo druhé, jsou to dvě strany jedné mince"), radio("cross", "✕ Nesouvisí spolu: kdyby pravá strana zmizela, vztah by byl stejný nebo lepší"))),
-      h("div", { class: "row-actions" },
-        ctx.pairsSection?.open ? send : null,
-        p.sent ? h("span", { class: "sent" }, "Odesláno ke schválení") : null,
-        h("button", { type: "button", class: "btn btn-danger", onclick: () => { me.pairs = me.pairs.filter((x) => x !== p); save(); renderPairs(); } }, "Smazat dvojici"),
-      ),
-    ));
-  });
-  if (!me.pairs.length) host.append(h("p", { class: "empty" }, "Zatím tu nemáš žádnou dvojici."));
-}
-
-async function sendPair(p) {
-  if (!me.cls) { toast("Nejdřív nahoře vyber svou třídu."); $("me-class").focus(); return; }
-  if (!p.gift.trim() || !p.cost.trim() || !p.mark) { toast("Doplň obě strany a vyber ⟷ nebo ✕."); return; }
-  if (p.sent) { toast("Tahle dvojice už je odeslaná."); return; }
-  try {
-    await submitItem({ section: ctx.pairsSection.id, text: p.gift, text2: p.cost, mark: p.mark, types: p.type ? [p.type] : [], classes: [me.cls] });
-    p.sent = true; save(); renderPairs();
-    toast("Odesláno. Po schválení se objeví v přehledu.");
-  } catch (e) {
-    toast("Nepodařilo se odeslat: " + e.message);
-  }
-}
-
 // ── reflexe ─────────────────────────────────────────────────
 const PROMPTS = [
   ["strong", "Který pilíř v mých vztazích stojí pevně?"],
@@ -383,7 +335,7 @@ function initExport() {
     e.target.value = "";
   };
   $("btn-wipe").onclick = () => {
-    if (!confirm("Opravdu smazat tvou mapu, priority, dvojice i reflexi z tohoto prohlížeče?")) return;
+    if (!confirm("Opravdu smazat tvou mapu, priority i reflexi z tohoto prohlížeče?")) return;
     ls.del(KEY);
     initPersonal(ctx);
     toast("Tvoje data jsou smazaná.");
@@ -409,15 +361,16 @@ function printPdf() {
   const sorted = me.people.slice().sort((a, b) => a.ring - b.ring || a.label.localeCompare(b.label, "cs"));
   const mapSec = h("section", { class: "pr-section" }, h("h2", {}, "Moje mapa vztahů"),
     h("div", { class: "pr-map" }, mapSvg,
-      h("p", { class: "pr-legend" }, "Míra blízkosti: 1 = nejbližší, 4 = nejvzdálenější. ⚡ = vztah mě někdy stojí hodně energie.")));
-  const peopleSec = sorted.length ? h("section", { class: "pr-section pr-allow" }, h("h2", {}, "Moje vztahy a co mi dávají"),
+      h("p", { class: "pr-legend" }, "Míra blízkosti: 1 = nejbližší, 4 = nejvzdálenější.")));
+  const peopleSec = sorted.length ? h("section", { class: "pr-section pr-allow" }, h("h2", {}, "Co mi vztahy dávají a co mě stojí"),
     h("table", { class: "pr-pairs pr-people" },
-      h("thead", {}, h("tr", {}, h("th", {}, "Kdo"), h("th", {}, "Blízkost"), h("th", {}, "Typ vztahu"), h("th", {}, "Co mi vztah dává"))),
+      h("thead", {}, h("tr", {}, h("th", {}, "Kdo"), h("th", {}, "Blízkost"), h("th", {}, "Typ vztahu"), h("th", {}, "Co mi dává"), h("th", {}, "Co mě stojí"))),
       h("tbody", {}, sorted.map((p) => h("tr", {},
-        h("td", {}, h("b", {}, p.label), p.bolt ? " ⚡" : ""),
+        h("td", {}, h("b", {}, p.label)),
         h("td", {}, String(p.ring)),
         h("td", {}, typeById(p.type)?.name || "–"),
-        h("td", {}, p.gives || "–")))),
+        h("td", {}, p.gives || "–"),
+        h("td", {}, p.costs || "–")))),
     )) : null;
 
   const prioKeys = Object.keys(me.prio);
@@ -426,13 +379,6 @@ function printPdf() {
       prioKeys.length > 1 ? h("p", { style: { margin: "2mm 0 1mm", fontWeight: 600 } }, k === "general" ? "Vztahy obecně" : typeById(k)?.name || k) : null,
       h("ol", { class: "pr-prio" }, orderFor(k).map((id) => h("li", {}, allValues().find((v) => v.id === id).name))),
     ]));
-
-  const filled = me.pairs.filter((p) => p.gift.trim() || p.cost.trim());
-  const pairsSec = filled.length ? h("section", { class: "pr-section" }, h("h2", {}, "Můj rub a líc"),
-    h("table", { class: "pr-pairs" },
-      h("thead", {}, h("tr", {}, h("th", {}, "Vztah"), h("th", {}, "Co mi dává"), h("th", {}, "Co mě stojí"), h("th", {}, ""))),
-      h("tbody", {}, filled.map((p) => h("tr", {}, h("td", {}, typeById(p.type)?.name || "–"), h("td", {}, p.gift), h("td", {}, p.cost), h("td", {}, p.mark === "cross" ? "✕" : p.mark === "pair" ? "⟷" : "")))),
-    )) : null;
 
   const refl = PROMPTS.filter(([k]) => me.reflect[k].trim());
   const reflSec = refl.length ? h("section", { class: "pr-section pr-reflect" }, h("h2", {}, "Moje reflexe"),
@@ -443,7 +389,7 @@ function printPdf() {
     h("h2", {}, "Na čem podle naší třídy stojí dobré vztahy"),
     h("div", { class: "pr-pillars" }, pillars.map((p) => h("span", {}, p)))) : null;
 
-  root.append(...[head, mapSec, peopleSec, prioSec, pairsSec, reflSec, pilSec].filter(Boolean),
+  root.append(...[head, mapSec, peopleSec, prioSec, reflSec, pilSec].filter(Boolean),
     h("p", { class: "pr-foot" }, SITE.title + " · " + SITE.subject + " · " + date));
 
   const old = document.title;
