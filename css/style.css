@@ -212,28 +212,30 @@ select:hover, input:hover, textarea:hover { border-color: var(--ink-2); }
   --d: 120px;
   position: relative; width: calc(var(--d) * var(--k, 1)); height: calc(var(--d) * var(--k, 1)); flex: none;
   display: grid; place-items: center; text-align: center;
-  font: inherit; color: var(--ink); background: none; border: 0; padding: 0; cursor: pointer;
+  font: inherit; color: var(--ink); background: none; border: 0; padding: 0; cursor: default;
   transition: opacity .3s, transform .4s cubic-bezier(.2, .8, .2, 1);
 }
 .bubble .discs { position: absolute; inset: 0; }
-.bubble .disc { position: absolute; inset: 5%; border-radius: 50%; background: var(--c); opacity: .36; }
-.bubble .disc.pie { opacity: .8; }
-.bubble.has-pie .count { bottom: 20%; }
-.bubble.has-pie .label { padding: 20%; }
+.bubble .disc { position: absolute; inset: 5%; border-radius: 50%; background: var(--c); }
+.bubble .disc.blend { mix-blend-mode: multiply; opacity: .85; }
+.bubble .disc.blend:only-child { mix-blend-mode: normal; opacity: 1; }
+.bubble .disc.pie { opacity: 1; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bubble .disc:not(.general) { opacity: .42; mix-blend-mode: normal; } }
+:root[data-theme="dark"] .bubble .disc:not(.general) { opacity: .42; mix-blend-mode: normal; }
+.bubble.has-pie .count { bottom: 17%; }
+.bubble.has-pie .label { padding: 17%; }
 .bubble .disc.general { background: transparent; border: 2px dashed var(--ink-2); opacity: .6; }
 .bubble .label {
   position: relative; padding: 14%; font-size: calc(var(--fs, 15px) * var(--kf, 1)); line-height: 1.15; font-weight: 600;
   font-variation-settings: "wdth" 88; hyphens: auto; overflow-wrap: anywhere;
 }
 .bubble .count { position: absolute; bottom: 11%; left: 0; right: 0; font-size: 12px; color: var(--ink); opacity: .7; font-weight: 500; }
-.bubble.voted .count::before { content: "✓ "; }
-.bubble:hover { transform: scale(1.04); }
 @media (max-width: 560px) {
   .bubbles { --k: .66; --kf: .86; gap: 8px; justify-content: center; }
   .bubble .count { font-size: 11px; bottom: 9%; }
 }
 .bubble.dim { opacity: .16; transform: scale(.86); }
-@media (prefers-reduced-motion: reduce) { .bubble { transition: none; } .bubble:hover { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .bubble { transition: none; } }
 
 .empty { padding: 28px; border: 1.5px dashed var(--line); border-radius: var(--r-md); color: var(--ink-2); max-width: 62ch; }
 

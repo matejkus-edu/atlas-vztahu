@@ -1,7 +1,7 @@
-import { SITE, CLASSES, AXES } from "./config.js?v=20261107c";
-import { DEMO, loadData, submitItem, vote, ls } from "./api.js?v=20261107c";
-import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261107c";
-import { initPersonal } from "./personal.js?v=20261107c";
+import { SITE, CLASSES, AXES } from "./config.js?v=20261107d";
+import { DEMO, loadData, submitItem, ls } from "./api.js?v=20261107d";
+import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261107d";
+import { initPersonal } from "./personal.js?v=20261107d";
 
 const state = {
   types: [],
@@ -10,7 +10,6 @@ const state = {
   filterType: null,
   filterClass: ls.get("atlas-class-filter", "all"),
   pairMark: "all",
-  voted: new Set(ls.get("atlas-voted", [])),
 };
 
 const $ = (id) => document.getElementById(id);
@@ -205,22 +204,16 @@ function emptyText(sec) {
 }
 
 function colorsOf(i) {
-  return (i.types || []).map(typeById).filter(Boolean).map((t) => t.color);
+  return (i.types || []).map(typeById).filter(Boolean).map(softColor);
 }
 
-function voteLabel(n) { return n + " " + plural(n, "hlas", "hlasy", "hlasů"); }
-
-async function doVote(item, el) {
-  if (state.voted.has(item.id)) { toast("Tady už tvůj hlas je."); return; }
-  state.voted.add(item.id);
-  ls.set("atlas-voted", [...state.voted]);
-  item.weight = (item.weight || 0) + 1;
-  el.classList.add("voted");
-  const c = el.querySelector(".count");
-  if (c) c.textContent = el.classList.contains("bubble") ? item.weight + "×" : voteLabel(item.weight);
-  toast("Přidal/a jsi hlas. Díky!");
-  if (el.classList.contains("pillar")) renderSections();
-  try { await vote(item.id); } catch (e) { toast("Hlas se nepodařilo uložit: " + e.message); }
+// Jemnější, sladěná paleta pro kruhy: stejné odstíny jako typy vztahů, ale tlumené a ve stejné světlosti.
+const SOFT = {
+  rodina: "#F2B49C", pratelstvi: "#EDD293", partnersky: "#EBB0C8", skola: "#A9C4E2",
+  komunita: "#AAD5B8", sluzby: "#9DD0CC", online: "#C4B8E2",
+};
+function softColor(t) {
+  return SOFT[t.id] || `color-mix(in oklab, ${t.color} 42%, #FBFBF8)`;
 }
 
 const DISC_OFFSETS = [
@@ -264,7 +257,7 @@ function typeShares(i) {
   i.parts.forEach((p) => {
     if ((p.types || []).length !== 1) return;
     const t = typeById(p.types[0]);
-    if (t) per.set(t.color, (per.get(t.color) || 0) + (p.weight || 0));
+    if (t) { const c = softColor(t); per.set(c, (per.get(c) || 0) + (p.weight || 0)); }
   });
   return [...per.entries()].sort((a, b) => b[1] - a[1]);
 }
@@ -272,12 +265,14 @@ function typeShares(i) {
 function pieBackground(shares) {
   const total = shares.reduce((a, [, w]) => a + w, 0);
   let acc = 0;
+  // mezi úseky prstence je úzká mezera v barvě papíru
   const stops = shares.map(([col, w]) => {
     const from = (acc / total) * 100;
     acc += w;
-    return `${col} ${from}% ${(acc / total) * 100}%`;
+    const to = (acc / total) * 100;
+    return `var(--paper) ${from}% ${from + 0.5}%, ${col} ${from + 0.5}% ${to - 0.5}%, var(--paper) ${to - 0.5}% ${to}%`;
   });
-  return `radial-gradient(circle closest-side, color-mix(in srgb, ${shares[0][0]} 16%, var(--paper)) 0 72%, transparent 73%), conic-gradient(${stops.join(", ")})`;
+  return `radial-gradient(circle closest-side, color-mix(in srgb, ${shares[0][0]} 38%, var(--paper)) 0 79%, transparent 80%), conic-gradient(${stops.join(", ")})`;
 }
 
 function renderBubbles(items) {
@@ -301,15 +296,13 @@ function renderBubbles(items) {
         ? cols.map((c, k) => h("span", { class: "disc blend", "--c": c, style: { transform: `translate(${offs[k][0]}%, ${offs[k][1]}%)` } }))
         : [h("span", { class: "disc general" })];
     const info = "Zmíněno " + w + "×: " + breakdown(i);
-    const btn = h("button", {
-      type: "button",
-      class: "bubble" + (shares.length > 1 ? " has-pie" : "") + (state.voted.has(i.id) ? " voted" : ""),
+    wrap.append(h("div", {
+      class: "bubble" + (shares.length > 1 ? " has-pie" : ""),
       "--d": d + "px", "--fs": fs + "px",
-      title: info + ". Klepni, pokud souhlasíš.",
-      "aria-label": i.text + ". " + info + ". Klepnutím přidáš hlas.",
-    }, h("span", { class: "discs" }, discs), h("span", { class: "label" }, i.text), h("span", { class: "count" }, w + "×"));
-    btn.addEventListener("click", () => doVote(i, btn));
-    wrap.append(btn);
+      title: info,
+      role: "img",
+      "aria-label": i.text + ". " + info,
+    }, h("span", { class: "discs" }, discs), h("span", { class: "label" }, i.text), h("span", { class: "count" }, w + "×")));
   });
   return wrap;
 }

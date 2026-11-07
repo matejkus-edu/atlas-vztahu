@@ -51,7 +51,7 @@ Adresu Apps Scriptu doplníš přímo na GitHubu: otevři `js/config.js`, klikni
 - **Výsledky z tabule** zapiš ve správě na kartě *Přidat z hodiny*. Váha znamená, kolikrát věc zazněla: určuje velikost kruhu nebo výšku pilíře.
 - **Žáci přispívají** tlačítkem *Přidat do přehledu* u každého oddílu nebo z osobní části (*Můj rub a líc → Odeslat anonymně*). Všechno nejdřív čeká na tvé schválení.
 - **Duplicity** sloučíš na kartě *Všechny položky*: zaškrtni podobné položky a zvol *Sloučit vybrané*. Váhy se sečtou a zůstane text první vybrané položky.
-- **Hlasy:** klepnutím na kruh nebo pilíř žák přidá hlas, jeden na zařízení.
+- **Hlasování** na webu není: velikost kruhů a výška pilířů vychází z vah, které zapíšeš (výsledky z hodiny, dotazník).
 - **Nový oddíl** pro další hodiny (např. *Co pomáhá v konfliktu*) přidáš na kartě *Oddíly*. Druh *bubliny* jsou kruhy, *pilíře* sloupy, *dvojice* rub a líc. Odškrtnutím *Žáci mohou přispívat* oddíl uzavřeš.
 - **Typy vztahů** a jejich rozpětí na osách upravíš na kartě *Typy vztahů*: −1 je levý pól, +1 pravý.
 
