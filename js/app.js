@@ -1,7 +1,7 @@
-import { SITE, CLASSES, AXES } from "./config.js?v=20261107d";
-import { DEMO, loadData, submitItem, ls } from "./api.js?v=20261107d";
-import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261107d";
-import { initPersonal } from "./personal.js?v=20261107d";
+import { SITE, CLASSES, AXES } from "./config.js?v=20261107e";
+import { DEMO, loadData, submitItem, ls } from "./api.js?v=20261107e";
+import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261107e";
+import { initPersonal } from "./personal.js?v=20261107e";
 
 const state = {
   types: [],
@@ -209,8 +209,8 @@ function colorsOf(i) {
 
 // Jemnější, sladěná paleta pro kruhy: stejné odstíny jako typy vztahů, ale tlumené a ve stejné světlosti.
 const SOFT = {
-  rodina: "#F2B49C", pratelstvi: "#EDD293", partnersky: "#EBB0C8", skola: "#A9C4E2",
-  komunita: "#AAD5B8", sluzby: "#9DD0CC", online: "#C4B8E2",
+  rodina: "#A8D5B5", pratelstvi: "#C4B7E8", partnersky: "#EEB3CE", skola: "#A9C8EA",
+  komunita: "#9ED7D3", sluzby: "#B7C0DE", online: "#DAB9E6",
 };
 function softColor(t) {
   return SOFT[t.id] || `color-mix(in oklab, ${t.color} 42%, #FBFBF8)`;
