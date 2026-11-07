@@ -1,7 +1,7 @@
-import { SITE, CLASSES, AXES } from "./config.js?v=20261107a";
-import { DEMO, loadData, submitItem, vote, ls } from "./api.js?v=20261107a";
-import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261107a";
-import { initPersonal } from "./personal.js?v=20261107a";
+import { SITE, CLASSES, AXES } from "./config.js?v=20261107c";
+import { DEMO, loadData, submitItem, vote, ls } from "./api.js?v=20261107c";
+import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261107c";
+import { initPersonal } from "./personal.js?v=20261107c";
 
 const state = {
   types: [],
@@ -217,7 +217,7 @@ async function doVote(item, el) {
   item.weight = (item.weight || 0) + 1;
   el.classList.add("voted");
   const c = el.querySelector(".count");
-  if (c) c.textContent = voteLabel(item.weight);
+  if (c) c.textContent = el.classList.contains("bubble") ? item.weight + "×" : voteLabel(item.weight);
   toast("Přidal/a jsi hlas. Díky!");
   if (el.classList.contains("pillar")) renderSections();
   try { await vote(item.id); } catch (e) { toast("Hlas se nepodařilo uložit: " + e.message); }
@@ -230,7 +230,59 @@ const DISC_OFFSETS = [
   [[-5, -5], [5, -5], [-5, 5], [5, 5]],
 ];
 
+// Bubliny: stejné položky z různých tříd a typů vztahů se sečtou do jedné.
+// Při vybraném typu vztahu se ukáže jen to, co patří k němu, s jeho vlastními počty.
+function mergeBubbles(items) {
+  if (state.filterType) items = items.filter((i) => (i.types || []).includes(state.filterType) || !(i.types || []).length);
+  const groups = new Map();
+  items.forEach((i) => {
+    const key = i.text.trim().toLocaleLowerCase("cs");
+    const g = groups.get(key);
+    if (!g) { groups.set(key, { ...i, parts: [i] }); return; }
+    g.parts.push(i);
+    g.weight = (g.weight || 0) + (i.weight || 0);
+    g.types = [...new Set([...(g.types || []), ...(i.types || [])])];
+    g.classes = [...new Set([...(g.classes || []), ...(i.classes || [])])];
+  });
+  return [...groups.values()].sort((a, b) => b.weight - a.weight);
+}
+
+function breakdown(i) {
+  const per = new Map();
+  (i.parts || [i]).forEach((p) => {
+    const names = (p.types || []).map((t) => typeById(t)?.name).filter(Boolean);
+    const key = names.join(" + ") || "všechny vztahy";
+    per.set(key, (per.get(key) || 0) + (p.weight || 0));
+  });
+  return [...per.entries()].map(([k, v]) => k + " " + v + "×").join(", ");
+}
+
+// podíl jednotlivých typů vztahů na sloučené položce (jen části s právě jedním typem)
+function typeShares(i) {
+  if (!i.parts || i.parts.length < 2) return [];
+  const per = new Map();
+  i.parts.forEach((p) => {
+    if ((p.types || []).length !== 1) return;
+    const t = typeById(p.types[0]);
+    if (t) per.set(t.color, (per.get(t.color) || 0) + (p.weight || 0));
+  });
+  return [...per.entries()].sort((a, b) => b[1] - a[1]);
+}
+
+function pieBackground(shares) {
+  const total = shares.reduce((a, [, w]) => a + w, 0);
+  let acc = 0;
+  const stops = shares.map(([col, w]) => {
+    const from = (acc / total) * 100;
+    acc += w;
+    return `${col} ${from}% ${(acc / total) * 100}%`;
+  });
+  return `radial-gradient(circle closest-side, color-mix(in srgb, ${shares[0][0]} 16%, var(--paper)) 0 72%, transparent 73%), conic-gradient(${stops.join(", ")})`;
+}
+
 function renderBubbles(items) {
+  items = mergeBubbles(items);
+  if (!items.length) return h("p", { class: "empty" }, "Pro tenhle typ vztahu tu zatím nic není.");
   const max = Math.max(...items.map((i) => i.weight || 1));
   const wrap = h("div", { class: "bubbles" });
   items.forEach((i) => {
@@ -241,17 +293,21 @@ function renderBubbles(items) {
     const fs = Math.round(13 + ((d - 92) / 128) * 5);
     const cols = colorsOf(i).slice(0, 4);
     const offs = DISC_OFFSETS[Math.max(0, cols.length - 1)];
-    const discs = cols.length
-      ? cols.map((c, k) => h("span", { class: "disc blend", "--c": c, style: { transform: `translate(${offs[k][0]}%, ${offs[k][1]}%)` } }))
-      : [h("span", { class: "disc general" })];
-    const typesTxt = (i.types || []).map((t) => typeById(t)?.name).filter(Boolean).join(", ") || "všechny vztahy";
+    // sloučená položka z víc typů vztahů: prstenec rozdělený podle podílu jednotlivých typů
+    const shares = typeShares(i);
+    const discs = shares.length > 1
+      ? [h("span", { class: "disc pie", style: { background: pieBackground(shares) } })]
+      : cols.length
+        ? cols.map((c, k) => h("span", { class: "disc blend", "--c": c, style: { transform: `translate(${offs[k][0]}%, ${offs[k][1]}%)` } }))
+        : [h("span", { class: "disc general" })];
+    const info = "Zmíněno " + w + "×: " + breakdown(i);
     const btn = h("button", {
       type: "button",
-      class: "bubble" + (matches(i) ? "" : " dim") + (state.voted.has(i.id) ? " voted" : ""),
+      class: "bubble" + (shares.length > 1 ? " has-pie" : "") + (state.voted.has(i.id) ? " voted" : ""),
       "--d": d + "px", "--fs": fs + "px",
-      title: typesTxt + ". Klepni, pokud souhlasíš.",
-      "aria-label": i.text + ". Týká se: " + typesTxt + ". " + voteLabel(w) + ". Klepnutím přidáš hlas.",
-    }, h("span", { class: "discs" }, discs), h("span", { class: "label" }, i.text), h("span", { class: "count" }, voteLabel(w)));
+      title: info + ". Klepni, pokud souhlasíš.",
+      "aria-label": i.text + ". " + info + ". Klepnutím přidáš hlas.",
+    }, h("span", { class: "discs" }, discs), h("span", { class: "label" }, i.text), h("span", { class: "count" }, w + "×"));
     btn.addEventListener("click", () => doVote(i, btn));
     wrap.append(btn);
   });

@@ -217,6 +217,9 @@ select:hover, input:hover, textarea:hover { border-color: var(--ink-2); }
 }
 .bubble .discs { position: absolute; inset: 0; }
 .bubble .disc { position: absolute; inset: 5%; border-radius: 50%; background: var(--c); opacity: .36; }
+.bubble .disc.pie { opacity: .8; }
+.bubble.has-pie .count { bottom: 20%; }
+.bubble.has-pie .label { padding: 20%; }
 .bubble .disc.general { background: transparent; border: 2px dashed var(--ink-2); opacity: .6; }
 .bubble .label {
   position: relative; padding: 14%; font-size: calc(var(--fs, 15px) * var(--kf, 1)); line-height: 1.15; font-weight: 600;
