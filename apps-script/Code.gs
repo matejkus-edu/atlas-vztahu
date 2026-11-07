@@ -348,7 +348,7 @@ var DEFAULT_SECTIONS = [
     subtitle: 'Chování a situace, které vztahy oslabují nebo rozbíjejí.' },
   { id: 'pilire', order: 4, kind: 'pillars', open: true, visible: true,
     title: 'Na čem vztahy stojí', en: 'pillars',
-    subtitle: 'Principy, na kterých vztah stojí: jedno slovo a k němu, co znamená. Každý kruh ve sloupu je jeden žák, který pilíř zmínil.' },
+    subtitle: 'Principy, na kterých vztah stojí: jedno slovo a k němu, co znamená. Čím vyšší sloup, tím víc žáků pilíř zmínilo. U jedné třídy je každý kruh jeden žák.' },
   { id: 'ambivalence', order: 5, kind: 'pairs', open: true, visible: true,
     title: 'Rub a líc', en: 'ambivalence',
     subtitle: 'Co nám vztah dává a co nás tentýž vztah stojí. ⟷ znamená, že jde o dvě strany jedné mince, ✕ že spolu nesouvisí.' },

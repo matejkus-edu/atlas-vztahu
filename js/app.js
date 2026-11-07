@@ -1,7 +1,7 @@
-import { SITE, CLASSES, AXES } from "./config.js?v=20261104a";
-import { DEMO, loadData, submitItem, vote, ls } from "./api.js?v=20261104a";
-import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261104a";
-import { initPersonal } from "./personal.js?v=20261104a";
+import { SITE, CLASSES, AXES } from "./config.js?v=20261107a";
+import { DEMO, loadData, submitItem, vote, ls } from "./api.js?v=20261107a";
+import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261107a";
+import { initPersonal } from "./personal.js?v=20261107a";
 
 const state = {
   types: [],
@@ -266,15 +266,35 @@ function splitPillar(text) {
 // Pilíře se nehlasují na webu (hlasuje se v dotazníku), kruh = jeden žák, který pilíř zmínil.
 const mentionLabel = (n) => plural(n, "zmínil " + n + " žák", "zmínili " + n + " žáci", "zmínilo " + n + " žáků");
 
+// Při „Všech třídách“ se pilíře se stejným názvem (část před dvojtečkou) z různých tříd sloučí.
+function mergePillars(items) {
+  if (state.filterClass !== "all") return items;
+  const groups = new Map();
+  items.forEach((i) => {
+    const key = splitPillar(i.text)[0].trim().toLocaleLowerCase("cs");
+    const g = groups.get(key);
+    if (!g) { groups.set(key, { ...i, parts: [i] }); return; }
+    g.parts.push(i);
+    g.weight = (g.weight || 0) + (i.weight || 0);
+    g.types = [...new Set([...(g.types || []), ...(i.types || [])])];
+    g.classes = [...new Set([...(g.classes || []), ...(i.classes || [])])];
+  });
+  return [...groups.values()].sort((a, b) => b.weight - a.weight);
+}
+
 function renderPillars(items) {
+  items = mergePillars(items);
   const row = h("div", { class: "pillars" });
+  // počet kruhů = počet žáků; u velkých součtů se sloupy zmenší ve stejném poměru
+  const maxW = Math.max(...items.map((i) => i.weight || 1));
+  const MAXN = 18;
   // výchozí barvy: pilíře bez typu dostanou postupně barvy typů vztahů
   const palette = state.types.map((t) => t.color).filter(Boolean);
   if (!palette.length) palette.push("#0078BF");
   let k0 = 0;
   items.forEach((i) => {
     const w = i.weight || 1;
-    const n = Math.min(14, w);
+    const n = maxW > MAXN ? Math.max(1, Math.round((w / maxW) * MAXN)) : w;
     let cols = colorsOf(i);
     if (!cols.length) cols = [palette[k0++ % palette.length]];
     let [name, rest] = splitPillar(i.text);
@@ -288,7 +308,8 @@ function renderPillars(items) {
       h("span", { class: "words" },
         h("span", { class: "name" }, name),
         rest ? h("span", { class: "rest" }, rest) : null,
-        h("span", { class: "count" }, mentionLabel(w))),
+        h("span", { class: "count" }, mentionLabel(w),
+          i.parts && i.parts.length > 1 ? " (" + i.parts.map((p) => (p.classes || []).join("+") + ": " + p.weight).join(", ") + ")" : "")),
     ));
   });
   return row;
