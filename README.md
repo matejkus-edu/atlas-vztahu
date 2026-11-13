@@ -67,3 +67,10 @@ Adresu Apps Scriptu doplníš přímo na GitHubu: otevři `js/config.js`, klikni
 - Názvy, třídy, hodnoty pro priority a symboly mapy najdeš v `js/config.js`.
 - Výchozí typy a oddíly jsou v `js/seed.js` (demo) a na konci `Code.gs` (pro `setup`).
 - Barvy, písmo a vzhled jsou v `css/style.css`.
+
+## Kauza Vypnutý mikrofon (`kauza/`)
+
+Samostatná skupinová hra k úvodu do komunikace (varianta B hodiny). Běží na `https://matejkus-edu.github.io/atlas-vztahu/kauza/`, učitelský přehled je na `…/kauza/#ucitel`.
+
+- Bez backendu hra funguje celá, jen se odpovědi nikam neukládají (postup si pamatuje prohlížeč skupiny).
+- Ukládání: nová Google tabulka → Rozšíření → Apps Script → vložit `apps-script/kauza.gs`, změnit `PIN`, spustit `setup`, nasadit jako webovou aplikaci (Spustit jako já, přístup Kdokoli). URL končící `/exec` vložit do `API_URL` v `kauza/index.html`.
