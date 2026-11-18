@@ -1,7 +1,7 @@
-import { SITE, CLASSES, AXES } from "./config.js?v=20261107e";
-import { DEMO, loadData, submitItem, ls } from "./api.js?v=20261107e";
-import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261107e";
-import { initPersonal } from "./personal.js?v=20261107e";
+import { SITE, CLASSES, AXES } from "./config.js?v=20261118a";
+import { DEMO, loadData, submitItem, ls } from "./api.js?v=20261118a";
+import { h, s, toast, plural, reducedMotion, collapsible, setAllFolded } from "./ui.js?v=20261118a";
+import { initPersonal } from "./personal.js?v=20261118a";
 
 const state = {
   types: [],

@@ -1,0 +1,175 @@
+/* ─────────────────────────────────────────────────────────────
+   Atlas komunikace – doplněk k style.css (stejná vizuální řeč)
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  --vec: #0078BF;
+  --vztah: #765BA7;
+  --vec-soft: #A9C8EA;
+  --vztah-soft: #C4B7E8;
+}
+
+/* rychlé skoky v liště */
+.jump a {
+  font-size: 15px; font-weight: 600; color: var(--ink); text-decoration: none;
+  padding: 6px 14px; border-radius: 999px;
+}
+.jump a:hover { background: var(--paper-2); }
+.bar-inner { justify-content: space-between; }
+@media (max-width: 560px) {
+  .jump { flex-wrap: wrap; border-radius: 22px; }
+  .jump a { font-size: 14px; padding: 6px 10px; }
+}
+
+.sub-h {
+  margin: 0 0 6px; font-size: clamp(21px, 2.4vw, 26px); line-height: 1.15; font-weight: 700;
+  font-variation-settings: "wdth" 85, "opsz" 36;
+}
+
+/* ── typy komunikace ─────────────────────────────────────── */
+.axes { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; counter-reset: none; }
+.axis-card {
+  display: grid; grid-template-columns: minmax(200px, 1fr) 2.6fr; gap: 14px 32px;
+  padding: 26px 0 22px; border-top: 1.5px solid var(--line);
+}
+.axis-head { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; align-content: start; }
+.axis-no {
+  grid-row: span 2; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
+  font-weight: 750; font-size: 18px; color: var(--ink);
+  background: radial-gradient(circle at 38% 50%, color-mix(in srgb, var(--a) 45%, transparent) 0 62%, transparent 63%),
+              radial-gradient(circle at 62% 50%, color-mix(in srgb, var(--b) 45%, transparent) 0 62%, transparent 63%);
+}
+.axis-head h3 {
+  margin: 0; font-size: clamp(22px, 2.6vw, 28px); line-height: 1.1; font-weight: 750;
+  font-variation-settings: "wdth" 80, "opsz" 48; text-wrap: balance;
+}
+.axis-q { margin: 0; color: var(--ink-2); font-style: italic; }
+
+.poles { display: grid; grid-template-columns: 1fr 56px 1fr; gap: 0 14px; align-items: start; }
+.pole h4 {
+  margin: 0 0 6px; display: flex; align-items: center; gap: 10px;
+  font-size: 19px; font-weight: 700; font-variation-settings: "wdth" 90;
+}
+.pole p { margin: 0; font-size: 16px; line-height: 1.5; }
+.orb { width: 22px; height: 22px; border-radius: 50%; flex: none; opacity: .75; }
+.pole-a .orb { background: var(--a); }
+.pole-b .orb { background: var(--b); }
+.track {
+  margin-top: 12px; height: 4px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--a), var(--b)); opacity: .55;
+}
+.axis-note { grid-column: 2; margin: 2px 0 0; font-size: 15px; color: var(--ink-2); max-width: 70ch; }
+
+@media (max-width: 820px) {
+  .axis-card { grid-template-columns: 1fr; }
+  .axis-note { grid-column: 1; }
+}
+@media (max-width: 560px) {
+  .poles { grid-template-columns: 1fr; gap: 12px; }
+  .track { display: none; }
+  .pole { padding-left: 14px; border-left: 3px solid color-mix(in srgb, var(--a) 55%, transparent); }
+  .pole-b { border-left-color: color-mix(in srgb, var(--b) 55%, transparent); }
+}
+
+/* ── věcná a vztahová rovina ─────────────────────────────── */
+.levels { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-bottom: 56px; }
+.level {
+  position: relative; isolation: isolate; padding: clamp(28px, 4vw, 48px);
+  min-height: 260px; display: grid; align-content: center;
+}
+.level-orb {
+  position: absolute; z-index: -1; border-radius: 50%; aspect-ratio: 1; height: 118%; top: -9%;
+  mix-blend-mode: multiply; opacity: .55;
+}
+.level-vec .level-orb { background: var(--vec-soft); right: -2%; }
+.level-vztah .level-orb { background: var(--vztah-soft); left: -2%; }
+.level-vztah { padding-left: clamp(40px, 6vw, 72px); }
+.level h3 {
+  margin: 0 0 14px; font-size: clamp(28px, 3.6vw, 40px); line-height: 1; font-weight: 780;
+  font-variation-settings: "wdth" 78, "opsz" 72;
+}
+.level dl { margin: 0; display: grid; gap: 2px; max-width: 32ch; }
+.level dt { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); margin-top: 8px; }
+.level dd { margin: 0; font-size: 18px; font-weight: 550; line-height: 1.35; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .level-orb { mix-blend-mode: normal; opacity: .22; } }
+:root[data-theme="dark"] .level-orb { mix-blend-mode: normal; opacity: .22; }
+@media (max-width: 700px) {
+  .levels { grid-template-columns: 1fr; }
+  .level { min-height: 0; padding: 28px 24px; }
+  .level-orb { height: auto; width: 88%; top: 50%; transform: translateY(-50%); }
+  .level-vec .level-orb { right: auto; left: -6%; }
+  .level-vztah { padding-left: 24px; }
+  .level-vztah .level-orb { left: auto; right: -6%; }
+}
+
+/* jedna věta, tři vztahy */
+.demo { margin-bottom: 56px; }
+.demo > .muted { margin: 0 0 18px; max-width: 62ch; }
+.quote {
+  margin: 0 0 18px; font-size: clamp(28px, 4.4vw, 48px); line-height: 1.1; font-weight: 750;
+  font-variation-settings: "wdth" 80, "opsz" 72; text-wrap: balance;
+}
+.quote-sm { font-size: clamp(22px, 3vw, 30px); }
+.tones { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.tone {
+  font: inherit; font-size: 15px; font-weight: 550; cursor: pointer; color: var(--ink);
+  padding: 8px 16px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--paper);
+}
+.tone:hover { border-color: var(--vztah); }
+.tone[aria-pressed="true"] { border-color: var(--vztah); background: color-mix(in srgb, var(--vztah) 16%, var(--paper)); font-weight: 680; }
+.readout { display: grid; grid-template-columns: 1fr 1.4fr; gap: 14px; }
+.read { padding: 18px 20px; border-radius: var(--r-md); }
+.read p { margin: 4px 0 0; font-size: 18px; line-height: 1.4; }
+.read-vec { background: color-mix(in srgb, var(--vec) 10%, var(--paper)); }
+.read-vztah { background: color-mix(in srgb, var(--vztah) 13%, var(--paper)); }
+.read-vztah #tone-meaning { font-weight: 650; }
+.read-label {
+  display: inline-block; font-size: 13px; font-weight: 650; text-transform: uppercase; letter-spacing: .06em;
+}
+.read-vec .read-label, .lab-vec { color: var(--vec); }
+.read-vztah .read-label, .lab-vztah { color: var(--vztah); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .read-vec .read-label, :root:not([data-theme="light"]) .lab-vec { color: #7DB8EE; }
+  :root:not([data-theme="light"]) .read-vztah .read-label, :root:not([data-theme="light"]) .lab-vztah { color: #B7A6E6; }
+}
+:root[data-theme="dark"] .read-vec .read-label, :root[data-theme="dark"] .lab-vec { color: #7DB8EE; }
+:root[data-theme="dark"] .read-vztah .read-label, :root[data-theme="dark"] .lab-vztah { color: #B7A6E6; }
+@media (max-width: 640px) { .readout { grid-template-columns: 1fr; } }
+
+/* dvě pravidla */
+.rules { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 40px; margin-bottom: 56px; }
+.rule { border-top: 1.5px solid var(--line); padding-top: 20px; }
+.rule > .muted { margin: 10px 0 0; }
+.pair { display: grid; gap: 8px; margin-top: 10px; }
+.say {
+  margin: 0; justify-self: start; padding: 9px 16px; border-radius: 18px 18px 18px 4px;
+  background: var(--paper-2); font-size: 18px; font-weight: 550;
+}
+.say + .say { justify-self: end; border-radius: 18px 18px 4px 18px; }
+@media (max-width: 700px) { .rules { grid-template-columns: 1fr; } }
+
+/* spor o věc × spor o vztah */
+.dispute { display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px 48px; align-items: start; margin-bottom: 56px; }
+.dispute-text p { margin: 8px 0 0; max-width: 52ch; }
+.help { padding: 12px 16px; border-left: 3px solid var(--vztah); background: color-mix(in srgb, var(--vztah) 8%, var(--paper)); border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+.help q { font-weight: 650; }
+.split { margin: 0; padding: 22px 24px; border: 1.5px solid var(--line); border-radius: var(--r-md); }
+.split .quote { margin-bottom: 14px; }
+.split-rows { display: grid; gap: 10px; }
+.split-rows p { margin: 0; display: grid; grid-template-columns: 70px 1fr; gap: 10px; align-items: baseline; }
+@media (max-width: 760px) { .dispute { grid-template-columns: 1fr; } }
+
+/* psaní */
+.texting > .muted { margin: 0 0 14px; max-width: 62ch; }
+.msgs { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.msg {
+  padding: 9px 16px; border-radius: 18px 18px 4px 18px; font-size: 18px; font-weight: 550;
+  background: color-mix(in srgb, var(--vec) 14%, var(--paper));
+}
+.msg-seen { background: none; border: 1.5px dashed var(--line); color: var(--ink-2); font-size: 15px; font-weight: 450; border-radius: 999px; }
+
+.foot a { color: inherit; }
+
+/* delší název než „Atlas vztahů“: na úzkém displeji menší písmo, ať nepřetéká */
+.hero h1 { font-size: clamp(48px, 14vw, 186px); max-width: 10ch; }
+@media (max-width: 700px) { .levels { overflow-x: clip; } }

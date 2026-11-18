@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Atlas komunikace</title>
+  <meta name="description" content="Společný přehled třídy k tématu komunikace: typy komunikace a věcná a vztahová rovina sdělení.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='24' cy='32' r='18' fill='%230078BF' fill-opacity='.75'/%3E%3Ccircle cx='40' cy='32' r='18' fill='%23765BA7' fill-opacity='.7'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=20261118a">
+  <link rel="stylesheet" href="css/komunikace.css?v=20261118a">
+</head>
+<body>
+  <a class="skip" href="#content">Přeskočit na obsah</a>
+
+  <header class="hero" id="top">
+    <svg class="hero-orbs" viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <circle class="blend" cx="840" cy="270" r="200" fill="#0078BF" fill-opacity="0.42"/>
+      <circle class="blend" cx="1040" cy="270" r="200" fill="#765BA7" fill-opacity="0.42"/>
+      <circle class="blend" cx="1150" cy="90" r="95" fill="#FF48B0" fill-opacity="0.42"/>
+      <circle class="blend" cx="720" cy="470" r="105" fill="#00A95C" fill-opacity="0.42"/>
+      <circle class="blend" cx="960" cy="500" r="70" fill="#00838A" fill-opacity="0.42"/>
+    </svg>
+    <nav class="atlas-switch wrap" aria-label="Atlasy">
+      <a href="./">Atlas vztahů</a>
+      <a href="komunikace.html" aria-current="page">Atlas komunikace</a>
+    </nav>
+    <div class="hero-text wrap">
+      <p class="hero-subject">H-PMC · Personality, Metaphysics &amp; Creativity</p>
+      <h1>Atlas komunikace</h1>
+      <p class="hero-lead">Společný přehled tříd L1A, L1B a L1C k bloku Vztahy a komunikace. Jak komunikaci třídíme a co každé sdělení říká mimo slova.</p>
+    </div>
+  </header>
+
+  <nav class="bar" aria-label="Oddíly">
+    <div class="bar-inner wrap">
+      <div class="mode jump">
+        <a href="#typy">Typy komunikace</a>
+        <a href="#roviny">Věcná a vztahová rovina</a>
+      </div>
+      <button type="button" class="btn btn-quiet fold-all" id="fold-all">Sbalit vše</button>
+    </div>
+  </nav>
+
+  <main id="content">
+
+    <!-- ── Typy komunikace ─────────────────────────────────── -->
+    <section class="block wrap" id="typy" data-fold="k-typy" aria-labelledby="typy-title">
+      <header class="block-head">
+        <h2 id="typy-title">Typy komunikace</h2>
+        <p class="block-sub">Komunikaci třídíme podle pěti dvojic protikladů (podle učebnice Psychologie pro střední školy, Helus). Dvojice jsou spíš brýle než škatulky: většina rozhovorů leží někde mezi póly a platí pro ni víc dvojic najednou.</p>
+      </header>
+
+      <ol class="axes">
+        <li class="axis-card" style="--a:#0078BF; --b:#765BA7">
+          <div class="axis-head">
+            <span class="axis-no" aria-hidden="true">1</span>
+            <h3>Verbální – neverbální</h3>
+            <p class="axis-q">Čím sdělujeme?</p>
+          </div>
+          <div class="poles">
+            <div class="pole pole-a">
+              <h4><span class="orb" aria-hidden="true"></span>Verbální</h4>
+              <p>Sdělujeme slovy, mluvenou i psanou řečí. Slovy hlavně vysvětlujeme, argumentujeme, ptáme se a odpovídáme. Nesou věcný obsah.</p>
+            </div>
+            <div class="track" aria-hidden="true"></div>
+            <div class="pole pole-b">
+              <h4><span class="orb" aria-hidden="true"></span>Neverbální</h4>
+              <p>Sdělujeme beze slov: mimikou, pohledem, gesty, postojem, dotekem, vzdáleností, oblečením. Patří sem i tón, důraz, pomlky a tempo řeči. Nese hlavně city a postoje a může slova podtrhnout, nebo jim odporovat (ironie).</p>
+            </div>
+          </div>
+          <p class="axis-note">Obvykle je přítomné obojí. Ptáme se, co v rozhovoru převažuje a co je rozhodující.</p>
+        </li>
+
+        <li class="axis-card" style="--a:#00A95C; --b:#0078BF">
+          <div class="axis-head">
+            <span class="axis-no" aria-hidden="true">2</span>
+            <h3>Symetrická – asymetrická</h3>
+            <p class="axis-q">Jak vyvážený je podíl účastníků?</p>
+          </div>
+          <div class="poles">
+            <div class="pole pole-a">
+              <h4><span class="orb" aria-hidden="true"></span>Symetrická</h4>
+              <p>Účastníci mají zhruba stejný prostor a vliv. Nikdo nemá automaticky poslední slovo.</p>
+            </div>
+            <div class="track" aria-hidden="true"></div>
+            <div class="pole pole-b">
+              <h4><span class="orb" aria-hidden="true"></span>Asymetrická</h4>
+              <p>Jeden víc mluví, vede a rozhoduje. Plyne z postavení (nadřízený a podřízený), věku, odbornosti, odpovědnosti (rodič a dítě), nebo z povahy.</p>
+            </div>
+          </div>
+          <p class="axis-note">Poznáte ji podle toho, kdo má poslední slovo, kdo komu skáče do řeči nebo kdo komu jednostranně tyká. Asymetrie sama není chyba. Problém je, když slabšího blokuje.</p>
+        </li>
+
+        <li class="axis-card" style="--a:#00838A; --b:#FF48B0">
+          <div class="axis-head">
+            <span class="axis-no" aria-hidden="true">3</span>
+            <h3>Harmonická – konfliktní</h3>
+            <p class="axis-q">Kam rozhovor směřuje?</p>
+          </div>
+          <div class="poles">
+            <div class="pole pole-a">
+              <h4><span class="orb" aria-hidden="true"></span>Harmonická</h4>
+              <p>Účastníci docházejí k souladu zájmů. Každý odchází s tím, co potřeboval.</p>
+            </div>
+            <div class="track" aria-hidden="true"></div>
+            <div class="pole pole-b">
+              <h4><span class="orb" aria-hidden="true"></span>Konfliktní</h4>
+              <p>Rozpory se vyhrocují, roste nespokojenost se vztahem, hrozí napadení nebo rozpad vztahu.</p>
+            </div>
+          </div>
+        </li>
+
+        <li class="axis-card" style="--a:#FF48B0; --b:#00A95C">
+          <div class="axis-head">
+            <span class="axis-no" aria-hidden="true">4</span>
+            <h3>Soutěživá – spolupracující</h3>
+            <p class="axis-q">Jde o vítězství, nebo o společný cíl?</p>
+          </div>
+          <div class="poles">
+            <div class="pole pole-a">
+              <h4><span class="orb" aria-hidden="true"></span>Soutěživá</h4>
+              <p>Jde o to, kdo je lepší a kdo vyhraje. Řídí se pravidly. Když je někdo poruší, mění se v konfliktní.</p>
+            </div>
+            <div class="track" aria-hidden="true"></div>
+            <div class="pole pole-b">
+              <h4><span class="orb" aria-hidden="true"></span>Spolupracující</h4>
+              <p>Úkoly se dělí podle společného záměru, lidé si vycházejí vstříc a pomáhají si.</p>
+            </div>
+          </div>
+          <p class="axis-note">Existuje i smíšená podoba: uvnitř týmu spolupráce, navenek soutěž s jiným týmem.</p>
+        </li>
+
+        <li class="axis-card" style="--a:#765BA7; --b:#00838A">
+          <div class="axis-head">
+            <span class="axis-no" aria-hidden="true">5</span>
+            <h3>Formální – neformální</h3>
+            <p class="axis-q">Rozhodují role a úkol, nebo osobní vztah?</p>
+          </div>
+          <div class="poles">
+            <div class="pole pole-a">
+              <h4><span class="orb" aria-hidden="true"></span>Formální</h4>
+              <p>City ustupují do pozadí. Rozhoduje úkol, pravidla a role, které lidé zastávají (lékař a sestra při operaci, žák a ředitel).</p>
+            </div>
+            <div class="track" aria-hidden="true"></div>
+            <div class="pole pole-b">
+              <h4><span class="orb" aria-hidden="true"></span>Neformální</h4>
+              <p>Lidé komunikují podle osobních sympatií, antipatií a citů (kamarádi, zamilovaní, rozhádané sousedky).</p>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ── Věcná a vztahová rovina ─────────────────────────── -->
+    <section class="block wrap" id="roviny" data-fold="k-roviny" aria-labelledby="roviny-title">
+      <header class="block-head">
+        <h2 id="roviny-title">Věcná a vztahová rovina</h2>
+        <p class="block-sub">Každé sdělení říká dvě věci naraz: co sděluji a kým si navzájem jsme.</p>
+      </header>
+
+      <div class="levels">
+        <article class="level level-vec">
+          <span class="level-orb" aria-hidden="true"></span>
+          <h3>Věcná rovina</h3>
+          <dl>
+            <dt>Otázka</dt><dd>Co říkám?</dd>
+            <dt>Nese ji hlavně</dt><dd>slova a fakta</dd>
+          </dl>
+        </article>
+        <article class="level level-vztah">
+          <span class="level-orb" aria-hidden="true"></span>
+          <h3>Vztahová rovina</h3>
+          <dl>
+            <dt>Otázka</dt><dd>Jak to říkám a kým jsi pro mě?</dd>
+            <dt>Nese ji hlavně</dt><dd>tón, výraz, gesta a situace. V psaní interpunkce, emoji a rychlost odpovědi.</dd>
+          </dl>
+        </article>
+      </div>
+
+      <div class="demo">
+        <h3 class="sub-h">Jedna věta, tři vztahy</h3>
+        <p class="muted">Vyber, jak větu někdo řekl. Věcná rovina zůstává stejná, mění se jen vztahová.</p>
+        <blockquote class="quote">„Zase tu nikdo nevynesl koš.“</blockquote>
+        <div class="tones" role="group" aria-label="Jak to bylo řečeno">
+          <button type="button" class="tone" data-tone="0" aria-pressed="true">jako oznámení</button>
+          <button type="button" class="tone" data-tone="1" aria-pressed="false">jako výčitka</button>
+          <button type="button" class="tone" data-tone="2" aria-pressed="false">jako vtip</button>
+        </div>
+        <div class="readout">
+          <div class="read read-vec">
+            <span class="read-label">Věcná rovina</span>
+            <p>Koš je plný a nikdo ho nevynesl.</p>
+          </div>
+          <div class="read read-vztah" aria-live="polite">
+            <span class="read-label">Vztahová rovina</span>
+            <p id="tone-how" class="muted"></p>
+            <p id="tone-meaning"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="rules">
+        <article class="rule">
+          <h3 class="sub-h">Stejná věc, jiný vztah</h3>
+          <div class="pair">
+            <p class="say">„Přijď za mnou hned.“</p>
+            <p class="say">„Můžu tě prosím na chvilku?“</p>
+          </div>
+          <p class="muted">V obou chci, abys přišel. Jednou ale rozkazuju, podruhé prosím.</p>
+        </article>
+        <article class="rule">
+          <h3 class="sub-h">Jiná věc, stejný vztah</h3>
+          <div class="pair">
+            <p class="say">„Můžu jet o víkendu na chatu?“</p>
+            <p class="say">„Můžu dneska přijít později?“</p>
+          </div>
+          <p class="muted">Pokaždé jde o něco jiného, ale v obou žádám o svolení. Kdo komu to asi říká?</p>
+        </article>
+      </div>
+
+      <div class="dispute">
+        <div class="dispute-text">
+          <h3 class="sub-h">Spor o věc a spor o vztah</h3>
+          <p>Spor o věc se dá ověřit: kalkulačkou, v pravidlech hry, v knize. Spor o vztah ne. A často ani nepoznáme, že se vede o vztah.</p>
+          <p class="help">Pomáhá pojmenovat, o co jde: <q>Nejde mi o tu matiku, ale o to, jak se mnou mluvíš.</q></p>
+        </div>
+        <figure class="split">
+          <blockquote class="quote quote-sm">„Dvanáct na druhou je 140? Ty fakt nevnímáš, co?“</blockquote>
+          <div class="split-rows">
+            <p><span class="read-label lab-vec">Věc</span>12² je 144. Tohle rozhodne kalkulačka.</p>
+            <p><span class="read-label lab-vztah">Vztah</span>„Jsi pomalý a nedáváš pozor.“ Tohle kalkulačka nerozhodne.</p>
+          </div>
+        </figure>
+      </div>
+
+      <div class="texting">
+        <h3 class="sub-h">A když jen píšeme?</h3>
+        <p class="muted">Nevidíme tón ani tvář, a vztahová rovina přesto nezmizí. Jak zní tyhle odpovědi na otázku „Jdeš večer ven?“</p>
+        <div class="msgs">
+          <span class="msg">ok</span>
+          <span class="msg">ok.</span>
+          <span class="msg">okk 🙂</span>
+          <span class="msg msg-seen">Přečteno 13:05</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot wrap">
+    <p>Atlas komunikace · H-PMC · Personality, Metaphysics &amp; Creativity. Pokračování <a href="./">Atlasu vztahů</a>.</p>
+  </footer>
+
+  <script type="module" src="js/komunikace.js?v=20261118a"></script>
+</body>
+</html>

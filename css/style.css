@@ -454,3 +454,17 @@ label.check input { margin-top: 4px; width: 18px; height: 18px; }
   .pr-foot { margin-top: 6mm; font-size: 8.5pt; color: var(--ink-2); }
   .pr-page-break { break-before: page; }
 }
+
+/* ── přepínač atlasů (vztahy / komunikace) ─────────────────── */
+.atlas-switch {
+  position: absolute; top: clamp(14px, 3vw, 28px); left: 0; right: 0; z-index: 2;
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.atlas-switch a {
+  font-size: 15px; font-weight: 600; color: var(--ink); text-decoration: none;
+  padding: 7px 15px; border-radius: 999px; border: 1.5px solid var(--ink);
+  background: color-mix(in srgb, var(--paper) 70%, transparent); backdrop-filter: blur(6px);
+}
+.atlas-switch a:hover { background: var(--paper); }
+.atlas-switch a[aria-current="page"] { background: var(--ink); color: var(--paper); }
+@media (max-width: 420px) { .atlas-switch a { font-size: 14px; padding: 6px 12px; } }
