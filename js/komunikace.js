@@ -1,5 +1,5 @@
 // Atlas komunikace: sbalitelné oddíly a ukázka „jedna věta, tři vztahy“.
-import { collapsible, setAllFolded } from "./ui.js?v=20261118a";
+import { collapsible, setAllFolded } from "./ui.js?v=20261118b";
 
 const sections = [...document.querySelectorAll("section[data-fold]")];
 sections.forEach((sec) => collapsible(sec, sec.dataset.fold));

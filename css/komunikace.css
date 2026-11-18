@@ -173,3 +173,16 @@
 /* delší název než „Atlas vztahů“: na úzkém displeji menší písmo, ať nepřetéká */
 .hero h1 { font-size: clamp(48px, 14vw, 186px); max-width: 10ch; }
 @media (max-width: 700px) { .levels { overflow-x: clip; } }
+
+/* první dvojice má tři složky */
+.poles.three { grid-template-columns: 1fr 32px 1fr 32px 1fr; }
+.pole-m .orb { background: var(--m); }
+.track-am { background: linear-gradient(90deg, var(--a), var(--m)); }
+.track-mb { background: linear-gradient(90deg, var(--m), var(--b)); }
+@media (max-width: 980px) {
+  .poles.three { grid-template-columns: 1fr; gap: 12px; }
+  .poles.three .track { display: none; }
+  .poles.three .pole { padding-left: 14px; border-left: 3px solid color-mix(in srgb, var(--a) 55%, transparent); }
+  .poles.three .pole-m { border-left-color: color-mix(in srgb, var(--m) 55%, transparent); }
+  .poles.three .pole-b { border-left-color: color-mix(in srgb, var(--b) 55%, transparent); }
+}
