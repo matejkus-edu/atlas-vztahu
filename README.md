@@ -5,6 +5,7 @@ Společně tvořený web třídy k bloku *Vztahy a komunikace* (H-PMC).
 - **Přehled třídy:** atlas typů vztahů na čtyřech osách a oddíly *Co od vztahů čekáme*, *Co do nich dáváme*, *Co je ničí*, *Na čem stojí* a *Rub a líc*. Všechno jde filtrovat podle typu vztahu a třídy.
 - **Moje vztahy:** osobní mapa vztahů, pořadí hodnot, vlastní dvojice rub/líc a reflexe. Ukládá se jen v prohlížeči žáka a dá se stáhnout jako PDF.
 - **Atlas komunikace** (`komunikace.html`): druhá stránka ve stejném vzhledu, zatím typy komunikace (pět Helusových dvojic) a věcná a vztahová rovina. Obsah je přímo v HTML, takže se upravuje v souboru. Mezi oběma atlasy se přepíná tlačítky nahoře v úvodu.
+- **Komunikační dovednosti:** menu na konci Atlasu komunikace se vykresluje z `js/skills.js`. Každá dovednost má vlastní stránku (zatím `naslouchani.html`). Novou dovednost zveřejníš tak, že vytvoříš její stránku podle `naslouchani.html` a v `skills.js` jí doplníš `href`.
 - **Správa** (`admin.html`): schvalování příspěvků, úpravy, slučování duplicit, zapisování výsledků z hodiny, úprava typů vztahů a oddílů.
 
 ```

@@ -1,5 +1,8 @@
 // Atlas komunikace: sbalitelné oddíly a ukázka „jedna věta, tři vztahy“.
-import { collapsible, setAllFolded } from "./ui.js?v=20261118b";
+import { collapsible, setAllFolded } from "./ui.js?v=20261119a";
+import { renderSkills } from "./skills.js?v=20261119a";
+
+renderSkills(document.getElementById("skills-menu"), document.body.dataset.skill || null);
 
 const sections = [...document.querySelectorAll("section[data-fold]")];
 sections.forEach((sec) => collapsible(sec, sec.dataset.fold));
@@ -33,6 +36,7 @@ const TONES = [
   { how: "Úsměv, přehnaně dramatický tón.", meaning: "„Jsme v tom spolu a beru to s nadhledem.“" },
 ];
 const buttons = [...document.querySelectorAll(".tone")];
+if (buttons.length) {
 const how = document.getElementById("tone-how");
 const meaning = document.getElementById("tone-meaning");
 function setTone(i) {
@@ -43,3 +47,4 @@ function setTone(i) {
 }
 buttons.forEach((b) => b.addEventListener("click", () => setTone(Number(b.dataset.tone))));
 setTone(0);
+}

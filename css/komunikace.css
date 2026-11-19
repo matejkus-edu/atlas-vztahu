@@ -186,3 +186,111 @@
   .poles.three .pole-m { border-left-color: color-mix(in srgb, var(--m) 55%, transparent); }
   .poles.three .pole-b { border-left-color: color-mix(in srgb, var(--b) 55%, transparent); }
 }
+
+/* ── komunikační dovednosti: menu ─────────────────────────── */
+.skills { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.skill {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: flex; flex-direction: column; gap: 6px; min-height: 250px;
+  padding: 20px 20px 18px; border-radius: var(--r-md); border: 1.5px solid var(--ink);
+  color: var(--ink); text-decoration: none; background: var(--paper);
+  transition: transform .25s cubic-bezier(.2, .8, .2, 1), box-shadow .25s;
+}
+a.skill:hover { transform: translateY(-3px); box-shadow: 0 10px 24px -14px color-mix(in srgb, var(--ink) 55%, transparent); }
+.skill-orbs { position: absolute; z-index: -1; width: 150px; height: 150px; right: -26px; top: -26px; }
+.skill-no { font-size: 14px; font-weight: 650; letter-spacing: .06em; color: var(--ink-2); }
+.skill h3 {
+  margin: 34px 0 0; font-size: 25px; line-height: 1.05; font-weight: 760; max-width: 11ch;
+  font-variation-settings: "wdth" 80, "opsz" 48; text-wrap: balance;
+}
+.skill-topic { margin: 0; font-size: 14px; color: var(--ink-2); }
+.skill-desc { margin: 4px 0 0; font-size: 15.5px; line-height: 1.45; }
+.skill-status {
+  margin-top: auto; padding-top: 12px; font-size: 14px; font-weight: 650;
+}
+a.skill .skill-status::after { content: " →"; }
+.skill.is-current { border-width: 2.5px; }
+.skill.is-current .skill-status::after { content: ""; }
+.skill.is-soon { border-style: dashed; border-color: var(--line); }
+.skill.is-soon .skill-orbs { opacity: .45; filter: grayscale(.5); }
+.skill.is-soon h3, .skill.is-soon .skill-desc { color: var(--ink-2); }
+.skill.is-soon .skill-status { font-weight: 500; color: var(--ink-2); }
+@media (prefers-reduced-motion: reduce) { .skill { transition: none; } a.skill:hover { transform: none; } }
+
+/* ── stránka dovednosti ───────────────────────────────────── */
+.hero-skill { min-height: min(62vh, 520px); }
+.hero-skill h1 { font-size: clamp(48px, 10vw, 128px); max-width: 12ch; line-height: .9; }
+.hero-skill .hero-subject a { color: inherit; }
+.hero-skill .en { font-size: .24em; letter-spacing: 0; vertical-align: .3em; }
+
+.points { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.points li {
+  padding: 18px 20px 18px 52px; border-radius: var(--r-md); background: var(--paper-2);
+  position: relative; font-size: 17px; line-height: 1.5;
+}
+.points li::before {
+  content: ""; position: absolute; left: 18px; top: 22px; width: 18px; height: 18px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 50%, color-mix(in srgb, #0078BF 60%, transparent) 0 58%, transparent 60%),
+              radial-gradient(circle at 65% 50%, color-mix(in srgb, #765BA7 60%, transparent) 0 58%, transparent 60%);
+}
+.points .point-key { grid-column: 1 / -1; background: var(--ink); color: var(--paper); }
+.points .point-key::before { background: radial-gradient(circle, #C4B7E8 0 58%, transparent 60%); }
+@media (max-width: 700px) { .points { grid-template-columns: 1fr; } }
+
+.techs { list-style: none; margin: 0; padding: 0; counter-reset: tech; }
+.tech {
+  counter-increment: tech; display: grid; grid-template-columns: 52px minmax(180px, 1fr) 1.7fr; gap: 6px 22px;
+  padding: 18px 0; border-top: 1.5px solid var(--line); align-items: start;
+}
+.tech::before {
+  content: counter(tech); width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+  font-weight: 750; font-size: 16px; background: color-mix(in srgb, #0078BF 18%, var(--paper));
+}
+.tech:nth-child(3n+2)::before { background: color-mix(in srgb, #765BA7 20%, var(--paper)); }
+.tech:nth-child(3n)::before { background: color-mix(in srgb, #00A95C 20%, var(--paper)); }
+.tech h3 { margin: 4px 0 0; font-size: 20px; line-height: 1.2; font-weight: 700; font-variation-settings: "wdth" 88; }
+.tech-sub { display: block; font-size: 15px; font-weight: 450; color: var(--ink-2); }
+.tech-body { display: grid; gap: 8px; padding-top: 4px; }
+.tech-body p { margin: 0; }
+.says { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start; }
+.bubble-say {
+  display: inline-block; padding: 8px 14px; border-radius: 16px 16px 16px 4px; font-weight: 550;
+  background: color-mix(in srgb, #0078BF 11%, var(--paper));
+}
+@media (max-width: 760px) {
+  .tech { grid-template-columns: 44px 1fr; }
+  .tech-body { grid-column: 2; }
+}
+
+.brakes { margin: 10px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.brakes > div { padding: 14px 16px; border: 1.5px solid var(--line); border-radius: var(--r-md); }
+.brakes dt { font-weight: 700; margin-bottom: 4px; }
+.brakes dd { margin: 0; font-size: 15.5px; color: var(--ink-2); }
+.sub-h-gap { margin-top: 48px; }
+
+.chat { margin-top: 14px; display: grid; gap: 16px; }
+.chat-in { max-width: 560px; }
+.chat-who { font-size: 14px; color: var(--ink-2); }
+.chat-in p {
+  margin: 4px 0 0; padding: 14px 18px; border-radius: 20px 20px 20px 4px;
+  font-size: clamp(18px, 2.2vw, 21px); font-weight: 600; line-height: 1.4;
+  background: color-mix(in srgb, #765BA7 15%, var(--paper));
+}
+.chat-outs { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.chat-outs li { display: grid; grid-template-columns: minmax(160px, 1fr) 2fr; gap: 6px 18px; align-items: center; }
+.brake-name { font-weight: 650; font-size: 15.5px; text-align: right; }
+.brake-name small { display: block; font-size: 13px; font-weight: 450; color: var(--ink-2); }
+.chat-out {
+  justify-self: start; padding: 9px 15px; border-radius: 18px 18px 4px 18px;
+  border: 1.5px solid color-mix(in srgb, #FF48B0 45%, var(--line)); background: var(--paper);
+}
+.chat-out i { color: var(--ink-2); font-size: .92em; }
+.chat-note {
+  margin: 6px 0 0; padding: 12px 16px; border-left: 3px solid #00A95C; max-width: 62ch;
+  background: color-mix(in srgb, #00A95C 8%, var(--paper)); border-radius: 0 var(--r-sm) var(--r-sm) 0;
+}
+@media (max-width: 640px) {
+  .chat-outs { gap: 14px; }
+  .chat-outs li { grid-template-columns: 1fr; }
+  .brake-name { text-align: left; }
+}
