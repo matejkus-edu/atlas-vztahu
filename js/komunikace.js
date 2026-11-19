@@ -1,6 +1,6 @@
 // Atlas komunikace: sbalitelné oddíly a ukázka „jedna věta, tři vztahy“.
-import { collapsible, setAllFolded } from "./ui.js?v=20261119a";
-import { renderSkills } from "./skills.js?v=20261119a";
+import { collapsible, setAllFolded } from "./ui.js?v=20261119b";
+import { renderSkills } from "./skills.js?v=20261119b";
 
 renderSkills(document.getElementById("skills-menu"), document.body.dataset.skill || null);
 

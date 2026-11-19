@@ -218,8 +218,10 @@ a.skill .skill-status::after { content: " →"; }
 @media (prefers-reduced-motion: reduce) { .skill { transition: none; } a.skill:hover { transform: none; } }
 
 /* ── stránka dovednosti ───────────────────────────────────── */
-.hero-skill { min-height: min(62vh, 520px); }
-.hero-skill h1 { font-size: clamp(48px, 10vw, 128px); max-width: 12ch; line-height: .9; }
+.hero-skill { min-height: 0; }
+.hero-skill .hero-text { padding-top: 84px; padding-bottom: 32px; }
+.hero-skill h1 { font-size: clamp(40px, 6vw, 76px); max-width: none; line-height: .95; }
+.hero-skill .hero-lead { margin-top: 14px; }
 .hero-skill .hero-subject a { color: inherit; }
 .hero-skill .en { font-size: .24em; letter-spacing: 0; vertical-align: .3em; }
 
